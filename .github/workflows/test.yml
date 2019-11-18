@@ -1,0 +1,27 @@
+name: Test action
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        branch: [test]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Send mail
+        uses: ./
+        with:
+          server_address: ${{secrets.ADDRESS}}
+          server_port: 465
+          username: ${{secrets.USERNAME}}
+          password: ${{secrets.PASSWORD}}
+          subject: ${{github.repository}}
+          body: Test of action completed successfully!
+          to: ${{secrets.USERNAME}}
+          from: github-actions
