@@ -8,9 +8,6 @@ on:
 jobs:
   main:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        branch: [test]
     steps:
       - name: Checkout
         uses: actions/checkout@v1
