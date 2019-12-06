@@ -13,7 +13,10 @@ An action that simply sends a mail to multiple recipients.
     username: ${{secrets.MAIL_USERNAME}}
     password: ${{secrets.MAIL_PASSWORD}}
     subject: Github Actions job result
+    # Literal body
     body: Build job of ${{github.repository}} completed successfully!
+    # Read file contents as body:
+    body: README.md
     to: obiwan@tatooine.com,yoda@dagobah.com
     from: Luke Skywalker
 ```
