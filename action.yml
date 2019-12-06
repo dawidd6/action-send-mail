@@ -21,7 +21,7 @@ inputs:
     description: Subject of mail message
     required: true
   body:
-    description: Body of mail message
+    description: Body of mail message (might be a filename to read from)
     required: true
   to:
     description: Recipients mail addresses (separated with comma)

@@ -13,6 +13,9 @@ body = ENV['INPUT_BODY']
 to = ENV['INPUT_TO']
 from = ENV['INPUT_FROM']
 
+# Body
+body = File.exist?(body) ? File.read(body) : body
+
 # Message
 message = <<~END_OF_MESSAGE
   Subject: #{subject}

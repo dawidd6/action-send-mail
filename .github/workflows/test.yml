@@ -8,6 +8,11 @@ on:
 jobs:
   main:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        body:
+          - README.md
+          - Test of action completed successfully!
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -19,6 +24,6 @@ jobs:
           username: ${{secrets.USERNAME}}
           password: ${{secrets.PASSWORD}}
           subject: ${{github.repository}}
-          body: Test of action completed successfully!
+          body: ${{matrix.body}}
           to: ${{secrets.USERNAME}}
           from: github-actions
