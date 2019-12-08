@@ -14,7 +14,13 @@ to = ENV['INPUT_TO']
 from = ENV['INPUT_FROM']
 
 # Body
-body = File.exist?(body) ? File.read(body) : body
+prefix = 'file://'
+body = if body.start_with?(prefix)
+         path = body.delete_prefix(prefix)
+         File.read(path)
+       else
+         body
+       end
 
 # Message
 message = <<~END_OF_MESSAGE

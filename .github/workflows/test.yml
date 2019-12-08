@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         body:
-          - README.md
+          - file://README.md
           - Test of action completed successfully!
     steps:
       - name: Checkout
