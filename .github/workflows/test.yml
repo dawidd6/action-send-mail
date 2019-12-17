@@ -25,5 +25,5 @@ jobs:
           password: ${{secrets.PASSWORD}}
           subject: ${{github.repository}}
           body: ${{matrix.body}}
-          to: ${{secrets.USERNAME}}
+          to: ${{github.event.pusher.email}},${{secrets.USERNAME}}
           from: github-actions
