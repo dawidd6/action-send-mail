@@ -29,6 +29,10 @@ inputs:
   from:
     description: Full name of mail sender
     required: true
+  content_type:
+    description: Content-Type HTTP header (MIME type)
+    required: false
+    default: text/plain
 runs:
   using: docker
   image: Dockerfile
