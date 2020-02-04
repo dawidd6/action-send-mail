@@ -13,6 +13,7 @@ body = ENV['INPUT_BODY']
 to = ENV['INPUT_TO']
 from = ENV['INPUT_FROM']
 content_type = ENV['INPUT_CONTENT_TYPE'] || 'text/plain'
+tls = ENV['INPUT_TLS'] || 'true'
 
 # Body
 prefix = 'file://'
@@ -35,7 +36,7 @@ END_OF_MESSAGE
 # Send
 begin
   smtp = Net::SMTP.new(server_address, server_port.to_i)
-  smtp.enable_tls
+  smtp.enable_tls if tls == 'true'
   smtp.start(server_address, username, password, :login)
   smtp.send_message(message, username, to.split(','))
 rescue StandardError => e
