@@ -33,6 +33,10 @@ inputs:
     description: Content-Type HTTP header (MIME type)
     required: false
     default: text/plain
+  tls:
+    description: Enable or disable TLS
+    required: false
+    default: true
 runs:
   using: docker
   image: Dockerfile
