@@ -20,7 +20,7 @@ async function main() {
     body = core.getInput("body", {required: true})
     to = core.getInput("to", {required: true})
     from = core.getInput("from", {required: true})
-    html = core.getInput("html")
+    html = core.getInput("html") || "false"
 
     transport = nodemailer.createTransport({
         host: server_address,
@@ -36,8 +36,8 @@ async function main() {
         from: `"${from}" <${username}>`,
         to: to,
         subject: subject,
-        text: !html ? get_body(body) : undefined,
-        html: html ? get_body(body) : undefined,
+        text: html == "false" ? get_body(body) : undefined,
+        html: html == "true" ? get_body(body) : undefined,
     })
 
     console.log(info)
