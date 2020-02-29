@@ -12,35 +12,39 @@ function get_body(body) {
 }
 
 async function main() {
-    server_address = core.getInput("server_address", {required: true})
-    server_port = core.getInput("server_port", {required: true})
-    username = core.getInput("username", {required: true})
-    password = core.getInput("password", {required: true})
-    subject = core.getInput("subject", {required: true})
-    body = core.getInput("body", {required: true})
-    to = core.getInput("to", {required: true})
-    from = core.getInput("from", {required: true})
-    html = core.getInput("html") || "false"
+    try {
+        server_address = core.getInput("server_address", { required: true })
+        server_port = core.getInput("server_port", { required: true })
+        username = core.getInput("username", { required: true })
+        password = core.getInput("password", { required: true })
+        subject = core.getInput("subject", { required: true })
+        body = core.getInput("body", { required: true })
+        to = core.getInput("to", { required: true })
+        from = core.getInput("from", { required: true })
+        html = core.getInput("html") || "false"
 
-    transport = nodemailer.createTransport({
-        host: server_address,
-        port: server_port,
-        secure: server_port == "465",
-        auth: {
-            user: username,
-            pass: password,
-        }
-    })
+        transport = nodemailer.createTransport({
+            host: server_address,
+            port: server_port,
+            secure: server_port == "465",
+            auth: {
+                user: username,
+                pass: password,
+            }
+        })
 
-    info = await transport.sendMail({
-        from: `"${from}" <${username}>`,
-        to: to,
-        subject: subject,
-        text: html == "false" ? get_body(body) : undefined,
-        html: html == "true" ? get_body(body) : undefined,
-    })
+        info = await transport.sendMail({
+            from: `"${from}" <${username}>`,
+            to: to,
+            subject: subject,
+            text: html == "false" ? get_body(body) : undefined,
+            html: html == "true" ? get_body(body) : undefined,
+        })
 
-    console.log(info)
+        console.log(info)
+    } catch (error) {
+        core.setFailed(error.message)
+    }
 }
 
 main()
