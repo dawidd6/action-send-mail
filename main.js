@@ -41,7 +41,7 @@ async function main() {
             html: html == "true" ? get_body(body) : undefined,
         })
 
-        console.log(info)
+        core.info(info)
     } catch (error) {
         core.setFailed(error.message)
     }
