@@ -5,7 +5,7 @@ const fs = require("fs")
 function get_body(body) {
     if (body.startsWith("file://")) {
         body = body.replace("file://", "")
-        body = fs.readFileSync(body).toString()
+        body = fs.readFileSync(body, "utf8")
     }
 
     return body
