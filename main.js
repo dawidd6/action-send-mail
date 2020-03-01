@@ -41,7 +41,7 @@ async function main() {
             html: html == "true" ? get_body(body) : undefined,
         })
 
-        core.info(info)
+        core.info(info.toString())
     } catch (error) {
         core.setFailed(error.message)
     }
