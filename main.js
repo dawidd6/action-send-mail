@@ -4,8 +4,8 @@ const fs = require("fs")
 
 function get_body(body) {
     if (body.startsWith("file://")) {
-        body = body.replace("file://", "")
-        body = fs.readFileSync(body, "utf8")
+        const file = body.replace("file://", "")
+        return fs.readFileSync(file, "utf8")
     }
 
     return body
@@ -13,17 +13,17 @@ function get_body(body) {
 
 async function main() {
     try {
-        server_address = core.getInput("server_address", { required: true })
-        server_port = core.getInput("server_port", { required: true })
-        username = core.getInput("username", { required: true })
-        password = core.getInput("password", { required: true })
-        subject = core.getInput("subject", { required: true })
-        body = core.getInput("body", { required: true })
-        to = core.getInput("to", { required: true })
-        from = core.getInput("from", { required: true })
-        html = core.getInput("html") || "false"
+        const server_address = core.getInput("server_address", { required: true })
+        const server_port = core.getInput("server_port", { required: true })
+        const username = core.getInput("username", { required: true })
+        const password = core.getInput("password", { required: true })
+        const subject = core.getInput("subject", { required: true })
+        const body = core.getInput("body", { required: true })
+        const to = core.getInput("to", { required: true })
+        const from = core.getInput("from", { required: true })
+        const html = core.getInput("html") || "false"
 
-        transport = nodemailer.createTransport({
+        const transport = nodemailer.createTransport({
             host: server_address,
             port: server_port,
             secure: server_port == "465",
@@ -33,7 +33,7 @@ async function main() {
             }
         })
 
-        info = await transport.sendMail({
+        const info = await transport.sendMail({
             from: `"${from}" <${username}>`,
             to: to,
             subject: subject,
