@@ -23,22 +23,15 @@ async function main() {
         const from = core.getInput("from", { required: true })
         const content_type = core.getInput("content_type", { required: true })
 
-        const transport = nodemailer.createTransport(
-            {
-                host: server_address,
-                port: server_port,
-                secure: server_port == "465",
-                auth: {
-                    user: username,
-                    pass: password,
-                }
-            },
-            {
-                headers: {
-                    "Content-Type": content_type
-                }
+        const transport = nodemailer.createTransport({
+            host: server_address,
+            port: server_port,
+            secure: server_port == "465",
+            auth: {
+                user: username,
+                pass: password,
             }
-        )
+        })
 
         const info = await transport.sendMail({
             from: `"${from}" <${username}>`,
