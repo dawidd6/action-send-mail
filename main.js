@@ -21,7 +21,7 @@ async function main() {
         const body = core.getInput("body", { required: true })
         const to = core.getInput("to", { required: true })
         const from = core.getInput("from", { required: true })
-        const html = core.getInput("html") || "false"
+        const content_type = core.getInput("content_type", { required: true })
 
         const transport = nodemailer.createTransport({
             host: server_address,
@@ -37,8 +37,11 @@ async function main() {
             from: `"${from}" <${username}>`,
             to: to,
             subject: subject,
-            text: html == "false" ? get_body(body) : undefined,
-            html: html == "true" ? get_body(body) : undefined,
+            text: content_type != "text/html" ? get_body(body) : undefined,
+            html: content_type == "text/html" ? get_body(body) : undefined,
+            headers: {
+                "Content-Type": content_type
+            }
         })
 
         console.log(info)
