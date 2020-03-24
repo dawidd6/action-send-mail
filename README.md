@@ -19,6 +19,6 @@ An action that simply sends a mail to multiple recipients.
     body: file://README.md
     to: obiwan@tatooine.com,yoda@dagobah.com
     from: Luke Skywalker
-    # Is body a HTML document?:
-    html: true
+    # Optional content type:
+    content_type: text/html
 ```
