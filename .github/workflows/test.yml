@@ -7,9 +7,24 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        body:
-          - file://README.md
-          - Test of action completed successfully!
+        content_type:
+          - text/plain
+          - text/html
+          - text/markdown
+        include:
+          - content_type: text/plain
+            body: Test of action completed successfully!
+          - content_type: text/html
+            body: |
+              <!DOCTYPE html>
+              <html>
+              <body>
+              <h1>Heading</h1>
+              <p>Paragraph</p>
+              </body>
+              </html>
+          - content_type: text/markdown
+            body: file://README.md
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -24,3 +39,4 @@ jobs:
           body: ${{matrix.body}}
           to: ${{github.event.pusher.email}},${{secrets.USERNAME}}
           from: github-actions
+          content_type: ${{matrix.content_type}}
