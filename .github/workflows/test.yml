@@ -10,10 +10,9 @@ jobs:
         content_type:
           - text/plain
           - text/html
-          - text/markdown
         include:
           - content_type: text/plain
-            body: Test of action completed successfully!
+            body: file://README.md
           - content_type: text/html
             body: |
               <!DOCTYPE html>
@@ -23,8 +22,6 @@ jobs:
               <p>Paragraph</p>
               </body>
               </html>
-          - content_type: text/markdown
-            body: file://README.md
     steps:
       - name: Checkout
         uses: actions/checkout@v1
