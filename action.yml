@@ -29,9 +29,10 @@ inputs:
   from:
     description: Full name of mail sender
     required: true
-  html:
-    description: Is body a HTML document?
+  content_type:
+    description: Content-Type HTTP header (MIME type)
     required: false
+    default: text/plain
 runs:
   using: node12
   main: main.js
