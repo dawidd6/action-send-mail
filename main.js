@@ -34,7 +34,7 @@ async function main() {
         })
 
         const info = await transport.sendMail({
-            from: `"${from}" <${username}>`,
+            from: from,
             to: to,
             subject: subject,
             text: content_type != "text/html" ? get_body(body) : undefined,
