@@ -11,6 +11,14 @@ function get_body(body) {
     return body
 }
 
+function get_from(from, username) {
+    if (from.match(/.+<.+@.+>/)) {
+        return from
+    }
+
+    return `"${from}" <${username}>`
+}
+
 async function main() {
     try {
         const server_address = core.getInput("server_address", { required: true })
@@ -34,7 +42,7 @@ async function main() {
         })
 
         const info = await transport.sendMail({
-            from: from,
+            from: get_from(from, username),
             to: to,
             subject: subject,
             text: content_type != "text/html" ? get_body(body) : undefined,
