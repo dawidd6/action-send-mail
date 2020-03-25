@@ -24,7 +24,7 @@ jobs:
               </body>
               </html>
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v1
       - name: Send mail
         uses: ./
