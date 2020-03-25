@@ -36,5 +36,5 @@ jobs:
           subject: ${{github.repository}}
           body: ${{matrix.body}}
           to: ${{github.event.pusher.email}}
-          from: github-actions
+          from: github-actions <${{github.event.pusher.email}}>
           content_type: ${{matrix.content_type}}
