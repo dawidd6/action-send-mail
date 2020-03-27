@@ -1,5 +1,5 @@
-name: Send mail
-description: Send mail to multiple recipients
+name: Send email
+description: Send an email to multiple recipients
 author: dawidd6
 branding:
   icon: mail
