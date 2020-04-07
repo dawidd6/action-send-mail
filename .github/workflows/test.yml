@@ -14,6 +14,7 @@ jobs:
         include:
           - content_type: text/plain
             body: file://README.md
+            attachments: action.yml
           - content_type: text/html
             body: |
               <!DOCTYPE html>
@@ -23,6 +24,7 @@ jobs:
               <p>Paragraph</p>
               </body>
               </html>
+            attachments: package.json,package-lock.json
     steps:
       - name: Checkout code
         uses: actions/checkout@v1
@@ -38,3 +40,4 @@ jobs:
           to: ${{github.event.pusher.email}}
           from: github-actions
           content_type: ${{matrix.content_type}}
+          attachments: ${{matrix.attachments}}
