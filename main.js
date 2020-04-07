@@ -48,9 +48,9 @@ async function main() {
             subject: subject,
             text: content_type != "text/html" ? get_body(body) : undefined,
             html: content_type == "text/html" ? get_body(body) : undefined,
-            attachments: {
+            attachments: attach_file ? {
                 path: attach_file
-            }
+            } : undefined
         })
 
         console.log(info)
