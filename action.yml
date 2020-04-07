@@ -33,6 +33,9 @@ inputs:
     description: Content-Type HTTP header (text/html or text/plain)
     required: false
     default: text/plain
+  attach_file:
+    description: File path that will be added to mail message attachments
+    required: false
 runs:
   using: node12
   main: main.js
