@@ -34,7 +34,7 @@ inputs:
     required: false
     default: text/plain
   attachments:
-    description: File paths (separated with comma) that will be added to mail message attachments
+    description: Files that will be added to mail message attachments (separated with comma)
     required: false
 runs:
   using: node12
