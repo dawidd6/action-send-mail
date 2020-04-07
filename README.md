@@ -22,5 +22,5 @@ An action that simply sends a mail to multiple recipients.
     # Optional content type (defaults to text/plain):
     content_type: text/html
     # Optional attachments
-    attach_files: attachments.zip,git.diff,./dist/static/main.js
+    attachments: attachments.zip,git.diff,./dist/static/main.js
 ```

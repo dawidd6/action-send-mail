@@ -19,16 +19,6 @@ function get_from(from, username) {
     return `"${from}" <${username}>`
 }
 
-function get_attachments(attach_files) {
-    attach_files = attach_files.split(',')
-    let attachments = []
-    for (const attach_file of attach_files) {
-        attachments.push({path: attach_file})
-    }
-
-    return attachments
-}
-
 async function main() {
     try {
         const server_address = core.getInput("server_address", { required: true })
@@ -40,7 +30,7 @@ async function main() {
         const to = core.getInput("to", { required: true })
         const from = core.getInput("from", { required: true })
         const content_type = core.getInput("content_type", { required: true })
-        const attach_files = core.getInput("attach_files", { required: false })
+        const attachments = core.getInput("attachments", { required: false })
 
         const transport = nodemailer.createTransport({
             host: server_address,
@@ -58,7 +48,7 @@ async function main() {
             subject: subject,
             text: content_type != "text/html" ? get_body(body) : undefined,
             html: content_type == "text/html" ? get_body(body) : undefined,
-            attachments: attach_files ? get_attachments(attach_files) : undefined
+            attachments: attachments ? attachments.split(',').map(f => ({ path: f.trim() })) : undefined
         })
 
         console.log(info)

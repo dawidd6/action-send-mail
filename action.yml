@@ -33,7 +33,7 @@ inputs:
     description: Content-Type HTTP header (text/html or text/plain)
     required: false
     default: text/plain
-  attach_files:
+  attachments:
     description: File paths (separated with comma) that will be added to mail message attachments
     required: false
 runs:
