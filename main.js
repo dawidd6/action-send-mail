@@ -30,6 +30,7 @@ async function main() {
         const to = core.getInput("to", { required: true })
         const from = core.getInput("from", { required: true })
         const content_type = core.getInput("content_type", { required: true })
+        const attachments = core.getInput("attachments", { required: false })
 
         const transport = nodemailer.createTransport({
             host: server_address,
@@ -47,6 +48,7 @@ async function main() {
             subject: subject,
             text: content_type != "text/html" ? get_body(body) : undefined,
             html: content_type == "text/html" ? get_body(body) : undefined,
+            attachments: attachments ? attachments.split(',').map(f => ({ path: f.trim() })) : undefined
         })
 
         console.log(info)
