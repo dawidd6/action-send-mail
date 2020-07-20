@@ -15,7 +15,7 @@ jobs:
           - text/plain
           - text/html
         include:
-          - content_type: text/plain
+          - content_type: text/markdown
             body: file://README.md
             attachments: action.yml
           - content_type: text/html
