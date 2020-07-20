@@ -11,9 +11,6 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        content_type:
-          - text/plain
-          - text/html
         include:
           - content_type: text/markdown
             body: file://README.md
@@ -30,7 +27,7 @@ jobs:
             attachments: package.json,package-lock.json
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Send mail
         uses: ./
         with:
