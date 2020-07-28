@@ -5,9 +5,6 @@ const fs = require("fs")
 function get_body(body) {
     if (body.startsWith("file://")) {
         const filepath = body.replace("file://", "")
-        console.log(filepath)
-        console.log(fs.existsSync(filepath))
-
         if(fs.existsSync(filepath)) {
             return fs.readFileSync(filepath, "utf8")
         } else {
