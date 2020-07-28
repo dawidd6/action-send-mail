@@ -4,10 +4,13 @@ const fs = require("fs")
 
 function get_body(body) {
     if (body.startsWith("file://")) {
-        const file = body.replace("file://", "")
-        return fs.readFileSync(file, "utf8")
+        const filepath = body.replace("file://", "")
+        try {
+            return fs.readFileSync(filepath, "utf8")
+        } catch(error) {
+            return ""   // maybe the file is not exists
+        }
     }
-
     return body
 }
 
@@ -15,7 +18,6 @@ function get_from(from, username) {
     if (from.match(/.+<.+@.+>/)) {
         return from
     }
-
     return `"${from}" <${username}>`
 }
 
@@ -31,6 +33,11 @@ async function main() {
         const from = core.getInput("from", { required: true })
         const content_type = core.getInput("content_type", { required: true })
         const attachments = core.getInput("attachments", { required: false })
+
+        // if the email content is empty, don't send it
+        if (body == "") {
+            return;
+        }
 
         const transport = nodemailer.createTransport({
             host: server_address,
