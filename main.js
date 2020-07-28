@@ -5,10 +5,10 @@ const fs = require("fs")
 function get_body(body) {
     if (body.startsWith("file://")) {
         const filepath = body.replace("file://", "")
-        try {
+        if(fs.existsSync(filepath)) {
             return fs.readFileSync(filepath, "utf8")
-        } catch(error) {
-            return ""   // maybe the file is not exists
+        } else {
+            return ""
         }
     }
     return body
@@ -35,7 +35,8 @@ async function main() {
         const attachments = core.getInput("attachments", { required: false })
 
         // if the email content is empty, don't send it
-        if (body == "") {
+        content = get_body(body)
+        if (content == "") {
             return;
         }
 
@@ -53,8 +54,8 @@ async function main() {
             from: get_from(from, username),
             to: to,
             subject: subject,
-            text: content_type != "text/html" ? get_body(body) : undefined,
-            html: content_type == "text/html" ? get_body(body) : undefined,
+            text: content_type != "text/html" ? content : undefined,
+            html: content_type == "text/html" ? content : undefined,
             attachments: attachments ? attachments.split(',').map(f => ({ path: f.trim() })) : undefined
         })
 
