@@ -11,6 +11,7 @@ function get_body(body) {
             return ""
         }
     }
+
     return body
 }
 
@@ -18,6 +19,7 @@ function get_from(from, username) {
     if (from.match(/.+<.+@.+>/)) {
         return from
     }
+    
     return `"${from}" <${username}>`
 }
 
