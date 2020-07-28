@@ -2,7 +2,6 @@ const nodemailer = require("nodemailer")
 const core = require("@actions/core")
 const fs = require("fs")
 
-
 function get_body(body) {
     if (body.startsWith("file://")) {
         const filepath = body.replace("file://", "")
@@ -12,17 +11,17 @@ function get_body(body) {
             return ""
         }
     }
+
     return body
 }
-
 
 function get_from(from, username) {
     if (from.match(/.+<.+@.+>/)) {
         return from
     }
+    
     return `"${from}" <${username}>`
 }
-
 
 async function main() {
     try {
@@ -67,6 +66,5 @@ async function main() {
         core.setFailed(error.message)
     }
 }
-
 
 main()
