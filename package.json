@@ -13,9 +13,9 @@
   "author": "dawidd6",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dawidd6/action-send-mail/issues"
+    "url": "https://github.com/lyy289065406/action-send-mail/issues"
   },
-  "homepage": "https://github.com/dawidd6/action-send-mail#readme",
+  "homepage": "https://github.com/lyy289065406/action-send-mail#readme",
   "dependencies": {
     "@actions/core": "^1.2.4",
     "nodemailer": "^6.4.10"

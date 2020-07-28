@@ -5,6 +5,9 @@ const fs = require("fs")
 function get_body(body) {
     if (body.startsWith("file://")) {
         const filepath = body.replace("file://", "")
+        console.log(filepath)
+        console.log(fs.existsSync(filepath))
+
         if(fs.existsSync(filepath)) {
             return fs.readFileSync(filepath, "utf8")
         } else {
@@ -22,6 +25,7 @@ function get_from(from, username) {
 }
 
 async function main() {
+    console.log("+++++++++++++++++++++debug1+++++++++++++++++++++++")
     try {
         const server_address = core.getInput("server_address", { required: true })
         const server_port = core.getInput("server_port", { required: true })
@@ -39,6 +43,7 @@ async function main() {
         if (content == "") {
             return
         }
+        console.log("+++++++++++++++++++++debug2+++++++++++++++++++++++")
 
         const transport = nodemailer.createTransport({
             host: server_address,
