@@ -42,7 +42,7 @@ async function main() {
             }
         })
 
-        console.log(transport)
+        console.log(transport.options)
 
         const info = await transport.sendMail({
             from: getFrom(from, username),
