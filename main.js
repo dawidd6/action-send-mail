@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer")
 const core = require("@actions/core")
 const fs = require("fs")
 
-function get_body(body) {
+function getBody(body) {
     if (body.startsWith("file://")) {
         const file = body.replace("file://", "")
         return fs.readFileSync(file, "utf8")
@@ -11,7 +11,7 @@ function get_body(body) {
     return body
 }
 
-function get_from(from, username) {
+function getFrom(from, username) {
     if (from.match(/.+<.+@.+>/)) {
         return from
     }
@@ -42,12 +42,14 @@ async function main() {
             }
         })
 
+        console.log(transport)
+
         const info = await transport.sendMail({
-            from: get_from(from, username),
+            from: getFrom(from, username),
             to: to,
             subject: subject,
-            text: content_type != "text/html" ? get_body(body) : undefined,
-            html: content_type == "text/html" ? get_body(body) : undefined,
+            text: content_type != "text/html" ? getBody(body) : undefined,
+            html: content_type == "text/html" ? getBody(body) : undefined,
             attachments: attachments ? attachments.split(',').map(f => ({ path: f.trim() })) : undefined
         })
 
