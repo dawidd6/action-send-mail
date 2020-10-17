@@ -41,26 +41,24 @@ async function main() {
       host: server_address,
       port: server_port,
       secure: server_port == "465",
+      auth: {
+        api_key,
+      },
     };
 
-    if (api_key)
-      transportOptions = Object.assign(transportOptions, { auth: { api_key } });
-    if (!api_key)
-      transportOptions = Object.assign(transportOptions, {
-        auth: { user: username, pass: password },
-      });
+    // if (api_key)
+    //   transportOptions = Object.assign(transportOptions, { auth: { api_key } });
+    // if (!api_key)
+    //   transportOptions = Object.assign(transportOptions, {
+    //     auth: { user: username, pass: password },
+    //   });
 
-    if (api_key && username)
-      core.setFailed("You can't use both API and username based auth");
+    // if (api_key && username)
+    //   core.setFailed("You can't use both API and username based auth");
 
     const transport = nodemailer.createTransport(transportOptions);
 
     console.log(transport.options);
-
-    // to.split(",").map(async (email) => {
-    //   console.log(email);
-
-    // });
 
     const info = await transport.sendMail({
       from: getFrom(from, username),
