@@ -59,11 +59,6 @@ async function main() {
 
     to.split(",").map((email) => {
       console.log(email);
-      emailQueue.add({ email });
-    });
-
-    emailQueue.process(2, async (job, done) => {
-      const { email } = job.data;
       const info = await transport.sendMail({
         from: getFrom(from, username),
         to: email.trim(),
@@ -76,7 +71,6 @@ async function main() {
       });
 
       console.log(info);
-      done();
     });
 
     console.log("Done");
