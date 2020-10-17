@@ -72,6 +72,7 @@ async function main() {
     });
 
     to.split(",").map((email) => {
+      console.log(email);
       emailQueue.add({ email });
     });
   } catch (error) {
