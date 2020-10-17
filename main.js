@@ -57,7 +57,7 @@ async function main() {
 
     console.log(transport.options);
 
-    to.split(",").map((email) => {
+    to.split(",").map(async (email) => {
       console.log(email);
       const info = await transport.sendMail({
         from: getFrom(from, username),
