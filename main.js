@@ -77,6 +77,8 @@ async function main() {
       console.log(email);
       //emailQueue.add({ email });
     });
+
+    console.log("Done");
   } catch (error) {
     core.setFailed(error.message);
   }
