@@ -57,21 +57,23 @@ async function main() {
 
     console.log(transport.options);
 
-    to.split(",").map(async (email) => {
-      console.log(email);
-      const info = await transport.sendMail({
-        from: getFrom(from, username),
-        to: email.trim(),
-        subject: subject,
-        text,
-        html: content_type == "text/html" ? getBody(body) : undefined,
-        attachments: attachments
-          ? attachments.split(",").map((f) => ({ path: f.trim() }))
-          : undefined,
-      });
+    // to.split(",").map(async (email) => {
+    //   console.log(email);
 
-      console.log(info);
+    // });
+
+    const info = await transport.sendMail({
+      from: getFrom(from, username),
+      to: email.trim(),
+      subject: subject,
+      text,
+      html: content_type == "text/html" ? getBody(body) : undefined,
+      attachments: attachments
+        ? attachments.split(",").map((f) => ({ path: f.trim() }))
+        : undefined,
     });
+
+    console.log(info);
 
     console.log("Done");
   } catch (error) {
