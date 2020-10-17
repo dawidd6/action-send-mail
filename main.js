@@ -58,7 +58,7 @@ async function main() {
       const { email } = job.data;
       const info = await transport.sendMail({
         from: getFrom(from, username),
-        to: email,
+        to: email.trim(),
         subject: subject,
         text: content_type != "text/html" ? getBody(body) : undefined,
         html: content_type == "text/html" ? getBody(body) : undefined,
