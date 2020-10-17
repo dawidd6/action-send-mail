@@ -1,6 +1,9 @@
 const nodemailer = require("nodemailer");
 const core = require("@actions/core");
 const fs = require("fs");
+const redisURL = "redis://127.0.0.1:6379";
+const Bull = require("bull");
+const emailQueue = new Bull("mail", redisURL);
 
 function getBody(body) {
   if (body.startsWith("file://")) {
@@ -51,20 +54,26 @@ async function main() {
 
     const transport = nodemailer.createTransport(transportOptions);
 
-    console.log(transport.options);
+    emailQueue.process(2, async (job, done) => {
+      const { email } = job.data;
+      const info = await transport.sendMail({
+        from: getFrom(from, username),
+        to: email,
+        subject: subject,
+        text: content_type != "text/html" ? getBody(body) : undefined,
+        html: content_type == "text/html" ? getBody(body) : undefined,
+        attachments: attachments
+          ? attachments.split(",").map((f) => ({ path: f.trim() }))
+          : undefined,
+      });
 
-    const info = await transport.sendMail({
-      from: getFrom(from, username),
-      to: to,
-      subject: subject,
-      text: content_type != "text/html" ? getBody(body) : undefined,
-      html: content_type == "text/html" ? getBody(body) : undefined,
-      attachments: attachments
-        ? attachments.split(",").map((f) => ({ path: f.trim() }))
-        : undefined,
+      console.log(info);
+      done();
     });
 
-    console.log(info);
+    to.split(",").map((email) => {
+      emailQueue.add({ email });
+    });
   } catch (error) {
     core.setFailed(error.message);
   }

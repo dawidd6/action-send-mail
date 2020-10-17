@@ -1,0 +1,40 @@
+{
+  "name": "standard-as-callback",
+  "version": "2.0.1",
+  "description": "A performant and standard (Bluebird) library that registers a node-style callback on a promise",
+  "main": "built/index.js",
+  "types": "built/index.d.ts",
+  "directories": {
+    "lib": "built"
+  },
+  "files": [
+    "built/"
+  ],
+  "scripts": {
+    "build": "rm -rf built && tsc",
+    "test": "mocha",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luin/asCallback.git"
+  },
+  "keywords": [
+    "ascallback",
+    "nodeify",
+    "promise",
+    "bluebird"
+  ],
+  "author": "luin <i@zihua.li>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/luin/asCallback/issues"
+  },
+  "homepage": "https://github.com/luin/asCallback#readme",
+  "devDependencies": {
+    "mocha": "^5.2.0",
+    "promise-timeout": "^1.3.0",
+    "sinon": "^6.0.0",
+    "typescript": "^3.3.1"
+  }
+}
