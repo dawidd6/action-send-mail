@@ -6,18 +6,6 @@ on:
       - master
 
 jobs:
-  install dependencies:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-
-      - uses: actions/cache@v2
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-      - name: Install packages
-        run: yarn install
   main:
     runs-on: ubuntu-latest
     strategy:
