@@ -26,15 +26,16 @@ async function main() {
   try {
     const server_address = core.getInput("server_address", { required: true });
     const server_port = core.getInput("server_port", { required: true });
-    const username = core.getInput("username", { required: true });
-    const password = core.getInput("password", { required: true });
+    const username = core.getInput("username");
+    const password = core.getInput("password");
     const subject = core.getInput("subject", { required: true });
-    const body = core.getInput("body", { required: true });
+    const body = core.getInput("body");
+    const text = core.getInput("text");
     const to = core.getInput("to", { required: true });
     const from = core.getInput("from", { required: true });
     const content_type = core.getInput("content_type", { required: true });
     const attachments = core.getInput("attachments", { required: false });
-    const api_key = core.getInput("api_key", { required: true });
+    const api_key = core.getInput("api_key");
 
     const transportOptions = {
       host: server_address,
@@ -67,7 +68,7 @@ async function main() {
         from: getFrom(from, username),
         to: email.trim(),
         subject: subject,
-        text: content_type != "text/html" ? getBody(body) : undefined,
+        text,
         html: content_type == "text/html" ? getBody(body) : undefined,
         attachments: attachments
           ? attachments.split(",").map((f) => ({ path: f.trim() }))
