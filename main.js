@@ -54,6 +54,8 @@ async function main() {
 
     const transport = nodemailer.createTransport(transportOptions);
 
+    console.log(transport.options);
+
     emailQueue.process(2, async (job, done) => {
       const { email } = job.data;
       const info = await transport.sendMail({
@@ -73,7 +75,7 @@ async function main() {
 
     to.split(",").map((email) => {
       console.log(email);
-      emailQueue.add({ email });
+      //emailQueue.add({ email });
     });
   } catch (error) {
     core.setFailed(error.message);
