@@ -32,12 +32,14 @@ async function main() {
     const content_type = core.getInput("content_type", { required: true });
     const attachments = core.getInput("attachments", { required: false });
     const api_key = core.getInput("api_key");
+    const api_user = core.getInput("api_user");
 
     const transport = nodemailer.createTransport({
       host: server_address,
       port: server_port,
-      secure: server_port == "465",
+      secure: true,
       auth: {
+        api_user,
         api_key,
       },
     });
