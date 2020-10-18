@@ -38,9 +38,10 @@ async function main() {
       host: server_address,
       port: server_port,
       secure: true,
+      authMethod: "PLAIN",
       auth: {
-        username,
-        password,
+        api_key,
+        api_user,
       },
     });
 
