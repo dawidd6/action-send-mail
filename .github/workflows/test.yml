@@ -14,11 +14,10 @@ jobs:
       matrix:
         include:
           - content_type: text/markdown
-            body: file://README.md
             attachments: action.yml
-            convert_to_html_from_markdown: false
-            title: text/markdown
+            body: file://README.md
           - content_type: text/html
+            attachments: package.json,package-lock.json
             body: |
               <!DOCTYPE html>
               <html>
@@ -27,10 +26,8 @@ jobs:
               <p>Paragraph</p>
               </body>
               </html>
-            attachments: package.json,package-lock.json
-            convert_to_html_from_markdown: false
-            title: text/html
           - content_type: text/html
+            convert_markdown: true
             body: |
               # h1
               ## h2
@@ -39,9 +36,6 @@ jobs:
               _italics_
               - bullet 1
               - bullet 2
-            attachments: package.json,package-lock.json
-            convert_to_html_from_markdown: true
-            title: text/html (from markdown)
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -52,10 +46,10 @@ jobs:
           server_port: 465
           username: ${{secrets.USERNAME}}
           password: ${{secrets.PASSWORD}}
-          subject: "${{github.repository}}: ${{matrix.title}}"
+          subject: ${{github.repository}}
           body: ${{matrix.body}}
           to: ${{github.event.pusher.email}}
           from: github-actions
           content_type: ${{matrix.content_type}}
+          convert_markdown: ${{matrix.convert_markdown}}
           attachments: ${{matrix.attachments}}
-          convert_to_html_from_markdown: ${{matrix.convert_to_html_from_markdown}}

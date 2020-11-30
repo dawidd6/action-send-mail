@@ -33,9 +33,8 @@ inputs:
     description: Content-Type HTTP header (text/html or text/plain)
     required: false
     default: text/plain
-  convert_to_html_from_markdown:
-    description: "Convert the body data to html, assuming it is markdown"
-    default: false
+  convert_markdown:
+    description: Convert body from Markdown to HTML (set content_type input as text/html too)
     required: false
   attachments:
     description: Files that will be added to mail message attachments (separated with comma)

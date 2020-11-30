@@ -21,6 +21,8 @@ An action that simply sends a mail to multiple recipients.
     from: Luke Skywalker # <user@example.com>
     # Optional content type (defaults to text/plain):
     content_type: text/html
+    # Optional converting Markdown to HTML (set content_type to text/html too):
+    convert_markdown: true
     # Optional attachments:
     attachments: attachments.zip,git.diff,./dist/static/main.js
 ```
