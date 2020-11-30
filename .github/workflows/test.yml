@@ -17,6 +17,7 @@ jobs:
             body: file://README.md
             attachments: action.yml
             convert_to_html_from_markdown: false
+            title: text/markdown
           - content_type: text/html
             body: |
               <!DOCTYPE html>
@@ -28,6 +29,7 @@ jobs:
               </html>
             attachments: package.json,package-lock.json
             convert_to_html_from_markdown: false
+            title: text/html
           - content_type: text/html
             body: |
               # h1
@@ -39,6 +41,7 @@ jobs:
               - bullet 2
             attachments: package.json,package-lock.json
             convert_to_html_from_markdown: true
+            title: text/html (from markdown)
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -49,7 +52,7 @@ jobs:
           server_port: 465
           username: ${{secrets.USERNAME}}
           password: ${{secrets.PASSWORD}}
-          subject: ${{github.repository}}
+          subject: "${{github.repository}}: ${{matrix.title}}"
           body: ${{matrix.body}}
           to: ${{github.event.pusher.email}}
           from: github-actions
