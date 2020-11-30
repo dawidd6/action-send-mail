@@ -36,6 +36,7 @@ inputs:
   convert_to_html_from_markdown:
     description: "Convert the body data to html, assuming it is markdown"
     default: false
+    required: false
   attachments:
     description: Files that will be added to mail message attachments (separated with comma)
     required: false
