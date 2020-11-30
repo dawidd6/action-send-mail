@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   main:
@@ -13,9 +14,10 @@ jobs:
       matrix:
         include:
           - content_type: text/markdown
-            body: file://README.md
             attachments: action.yml
+            body: file://README.md
           - content_type: text/html
+            attachments: package.json,package-lock.json
             body: |
               <!DOCTYPE html>
               <html>
@@ -24,7 +26,16 @@ jobs:
               <p>Paragraph</p>
               </body>
               </html>
-            attachments: package.json,package-lock.json
+          - content_type: text/html
+            convert_markdown: true
+            body: |
+              # h1
+              ## h2
+              ### h3
+              **bold**
+              _italics_
+              - bullet 1
+              - bullet 2
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -40,4 +51,5 @@ jobs:
           to: ${{github.event.pusher.email}}
           from: github-actions
           content_type: ${{matrix.content_type}}
+          convert_markdown: ${{matrix.convert_markdown}}
           attachments: ${{matrix.attachments}}
