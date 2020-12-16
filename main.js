@@ -37,8 +37,10 @@ async function main() {
         const password = core.getInput("password", { required: true })
         const subject = core.getInput("subject", { required: true })
         const body = core.getInput("body", { required: true })
-        const to = core.getInput("to", { required: true })
         const from = core.getInput("from", { required: true })
+        const to = core.getInput("to", { required: true })
+        const cc = core.getInput("cc", { required: false })
+        const bcc = core.getInput("bcc", { required: false })
         const contentType = core.getInput("content_type", { required: true })
         const attachments = core.getInput("attachments", { required: false })
         const convertMarkdown = core.getInput("convert_markdown", { required: false })
@@ -58,6 +60,8 @@ async function main() {
         const info = await transport.sendMail({
             from: getFrom(from, username),
             to: to,
+            cc: cc ? cc : undefined,
+            bcc: bcc ? bcc : undefined,
             subject: subject,
             text: contentType != "text/html" ? getBody(body, convertMarkdown) : undefined,
             html: contentType == "text/html" ? getBody(body, convertMarkdown) : undefined,
