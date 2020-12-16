@@ -29,6 +29,12 @@ inputs:
   from:
     description: Full name of mail sender (might be with an email address specified in <>)
     required: true
+  cc:
+    description: Carbon copy recipients (separated with comma)
+    required: false
+  bcc:
+    description: Blind carbon copy recipients (separated with comma)
+    required: false
   content_type:
     description: Content-Type HTTP header (text/html or text/plain)
     required: false
