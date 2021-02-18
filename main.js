@@ -55,8 +55,6 @@ async function main() {
             }
         })
 
-        console.log(transport.options)
-
         const info = await transport.sendMail({
             from: getFrom(from, username),
             to: to,
@@ -67,8 +65,6 @@ async function main() {
             html: contentType == "text/html" ? getBody(body, convertMarkdown) : undefined,
             attachments: attachments ? attachments.split(',').map(f => ({ path: f.trim() })) : undefined
         })
-
-        console.log(info)
     } catch (error) {
         core.setFailed(error.message)
     }
