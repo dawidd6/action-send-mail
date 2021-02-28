@@ -1,66 +1,24 @@
-name: Test action
-
-on:
-  push:
-    branches:
-      - master
-  workflow_dispatch:
-
-jobs:
-  main:
-    runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 1
-      matrix:
-        include:
-          - content_type: text/markdown
-            attachments: action.yml
-            body: file://README.md
-          - content_type: text/html
-            attachments: package.json,package-lock.json
-            body: |
-              <!DOCTYPE html>
-              <html>
-              <body>
-              <h1>Heading</h1>
-              <p>Paragraph</p>
-              </body>
-              </html>
-          - content_type: text/html
-            convert_markdown: true
-            body: |
-              # h1 DOCTYPE HTML>
-<html lang=en> <!-- default on the document element is translate=yes -->
- <head>
-  <title>The Bee Game</title> <!-- implied translate=yes inherited from ancestors -->
- </head>
- <body>
-  <p>The Bee Game is a text adventure game in English.</p>
-  <p>When the game launches, the first thing you should do is type
-  <kbd translate=no>eat honey</kbd>. The game will respond with:</p>
-  <pre><samp translate=no>Yum yum! That was some good honey!</samp></pre>
- </body>
-</html>
-              ## h2
-              ### h3
-              **bold**
-              _italics_
-              - bullet 1
-              - bullet 2
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Send mail
-        uses: 
-        with:
-          server_address: ${{secrets.ADDRESS}}
-          server_port: 465
-          username: ${{secrets.USERNAME}}
-          password: ${{secrets.PASSWORD}}
-          subject: ${{github.repository}}
-          body: ${{matrix.body}}
-          to: ${{github.event.pusher.email}}
-          from: github-actions
-          content_type: ${{matrix.content_type}}
-          convert_markdown: ${{matrix.convert_markdown}}
-          attachments: ${{matrix.attachments}}
+ name: Send mail
+  uses: dawidd6/action-mail@v2
+  with:
+    server_address: smtp.gmail.com
+    server_port: 465
+    username: ${{secrets.MAIL_USERNAME}}
+    password: ${{secrets.MAIL_Passord}}
+    subject: Github Actions job result
+    # Literal body:
+    body: Build job of ${{github.repository}} completed successfully!
+    # Read file contents as body:
+    body: file://README.md
+    to: obiwan@example.com,yoda@example.com
+    from: Luke Skywalker # <osulieman@jazeerapaints.com>
+    # Optional carbon copy recipients
+    cc: kyloren@example.com,leia@example.com
+    # Optional blind carbon copy recipients
+    bcc: r2d2@example.com,hansolo@example.com
+    # Optional content type (defaults to text/plain):
+    content_type: text/html
+    # Optional converting Markdown to HTML (set content_type to text/html too):
+    convert_markdown: true
+    # Optional attachments:
+    attachments: attachments.zip,git.diff,./dist/static/main.js
