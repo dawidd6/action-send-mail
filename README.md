@@ -10,15 +10,15 @@ An action that simply sends a mail to multiple recipients.
   with:
     server_address: smtp.gmail.com
     server_port: 465
-    username: ${{secrets.MAIL_USERNAME}}
-    password: ${{secrets.MAIL_PASSWORD}}
+    username: ${{secrets.MAIL_osuliman@jazeerapaints.com}}
+    password: ${{secrets.MAIL_Asdfghjkl0@}}
     subject: Github Actions job result
     # Literal body:
     body: Build job of ${{github.repository}} completed successfully!
     # Read file contents as body:
     body: file://README.md
     to: obiwan@example.com,yoda@example.com
-    from: Luke Skywalker # <user@example.com>
+    from: Luke Skywalker # <your@example.com>
     # Optional carbon copy recipients
     cc: kyloren@example.com,leia@example.com
     # Optional blind carbon copy recipients
