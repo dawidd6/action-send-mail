@@ -18,7 +18,7 @@ An action that simply sends a mail to multiple recipients.
     # Read file contents as body:
     body: file://README.md
     to: obiwan@example.com,yoda@example.com
-    from: Luke Skywalker # <user@example.com>
+    from: user@example.com
     # Optional carbon copy recipients
     cc: kyloren@example.com,leia@example.com
     # Optional blind carbon copy recipients

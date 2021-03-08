@@ -1,6 +1,6 @@
 name: Send email
 description: Send an email to multiple recipients
-author: dawidd6
+author: dawidd6, modified by juanformoso
 branding:
   icon: mail
   color: blue
@@ -27,7 +27,7 @@ inputs:
     description: Recipients mail addresses (separated with comma)
     required: true
   from:
-    description: Full name of mail sender (might be with an email address specified in <>)
+    description: Email address of the sender
     required: true
   cc:
     description: Carbon copy recipients (separated with comma)

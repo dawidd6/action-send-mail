@@ -21,14 +21,6 @@ function getBody(bodyOrFile, convertMarkdown) {
     return body
 }
 
-function getFrom(from, username) {
-    if (from.match(/.+<.+@.+>/)) {
-        return from
-    }
-
-    return `"${from}" <${username}>`
-}
-
 async function main() {
     try {
         const serverAddress = core.getInput("server_address", { required: true })
@@ -56,7 +48,7 @@ async function main() {
         })
 
         const info = await transport.sendMail({
-            from: getFrom(from, username),
+            from: from,
             to: to,
             cc: cc ? cc : undefined,
             bcc: bcc ? bcc : undefined,
