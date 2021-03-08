@@ -1,4 +1,4 @@
-name: Send email
+name: Send email action
 description: Send an email to multiple recipients
 author: dawidd6, modified by juanformoso
 branding:
