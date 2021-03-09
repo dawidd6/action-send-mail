@@ -6,7 +6,7 @@ An action that simply sends a mail to multiple recipients.
 
 ```yaml
 - name: Send mail
-  uses: dawidd6/action-send-mail@v2
+  uses: juanformoso/action-send-mail@1
   with:
     server_address: smtp.gmail.com
     server_port: 465
