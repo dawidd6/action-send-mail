@@ -1,0 +1,41 @@
+{
+  "name": "@aws-sdk/types",
+  "version": "3.6.1",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.js",
+  "types": "./types/index.d.ts",
+  "description": "Types for the AWS SDK",
+  "devDependencies": {
+    "typescript": "~4.1.2"
+  },
+  "scripts": {
+    "prepublishOnly": "yarn build:cjs && yarn build:es",
+    "pretest": "yarn build:cjs",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:es": "tsc -p tsconfig.es.json",
+    "build": "yarn build:es && yarn build:cjs",
+    "postbuild": "downlevel-dts types types/ts3.4",
+    "test": "exit 0"
+  },
+  "author": {
+    "name": "AWS SDK for JavaScript Team",
+    "url": "https://aws.amazon.com/javascript/"
+  },
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">= 10.0.0"
+  },
+  "typesVersions": {
+    "<4.0": {
+      "types/*": [
+        "types/ts3.4/*"
+      ]
+    }
+  },
+  "homepage": "https://github.com/aws/aws-sdk-js-v3/tree/main/packages/types",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aws/aws-sdk-js-v3.git",
+    "directory": "packages/types"
+  }
+}

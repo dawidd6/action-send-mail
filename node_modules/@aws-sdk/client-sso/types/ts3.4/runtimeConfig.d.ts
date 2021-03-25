@@ -1,0 +1,5 @@
+import { ClientDefaults } from "./SSOClient";
+/**
+ * @internal
+ */
+export declare const ClientDefaultValues: Required<ClientDefaults>;
