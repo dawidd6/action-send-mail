@@ -31,10 +31,12 @@ function getFrom(from, username) {
 
 async function main() {
     try {
-        const serverAddress = core.getInput("server_address", { required: true })
-        const serverPort = core.getInput("server_port", { required: true })
-        const username = core.getInput("username", { required: true })
-        const password = core.getInput("password", { required: true })
+        const transport = core.getInput("transport", { required: true }).toLowerCase();
+        const isSmtp = transport === 'smtp';
+        const serverAddress = core.getInput("server_address", { required: isSmtp })
+        const serverPort = core.getInput("server_port", { required: isSmtp })
+        const username = core.getInput("username", { required: isSmtp })
+        const password = core.getInput("password", { required: isSmtp })
         const subject = core.getInput("subject", { required: true })
         const body = core.getInput("body", { required: true })
         const from = core.getInput("from", { required: true })
@@ -45,17 +47,29 @@ async function main() {
         const attachments = core.getInput("attachments", { required: false })
         const convertMarkdown = core.getInput("convert_markdown", { required: false })
 
-        const transport = nodemailer.createTransport({
-            host: serverAddress,
-            port: serverPort,
-            secure: serverPort == "465",
-            auth: {
-                user: username,
-                pass: password,
-            }
-        })
+        let transporter;
 
-        const info = await transport.sendMail({
+        if (transport == 'aws-ses') {
+            let aws = require("@aws-sdk/client-ses");
+            const ses = new aws.SES({
+                apiVersion: "2010-12-01",
+            });
+            transporter = nodemailer.createTransport({
+                SES: { ses, aws },
+            });
+        } else {
+            transporter = nodemailer.createTransport({
+                host: serverAddress,
+                port: serverPort,
+                secure: serverPort == "465",
+                auth: {
+                    user: username,
+                    pass: password,
+                }
+            })
+        };
+
+        const info = await transporter.sendMail({
             from: getFrom(from, username),
             to: to,
             cc: cc ? cc : undefined,

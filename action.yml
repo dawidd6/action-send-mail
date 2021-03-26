@@ -5,18 +5,22 @@ branding:
   icon: mail
   color: blue
 inputs:
+  transport:
+    description: Transport used (smtp or aws-ses)
+    required: false
+    default: smtp
   server_address:
     description: SMTP server address
-    required: true
+    required: false
   server_port:
     description: SMTP server port
-    required: true
+    required: false
   username:
     description: Authenticate as this user to SMTP server
-    required: true
+    required: false
   password:
     description: Authenticate with this password to SMTP server
-    required: true
+    required: false
   subject:
     description: Subject of mail message
     required: true
