@@ -23,6 +23,8 @@ An action that simply sends a mail to multiple recipients.
     cc: kyloren@example.com,leia@example.com
     # Optional blind carbon copy recipients
     bcc: r2d2@example.com,hansolo@example.com
+    # Optional unsigned/invalid certificates allowance:
+    ignore_cert: true
     # Optional content type (defaults to text/plain):
     content_type: text/html
     # Optional converting Markdown to HTML (set content_type to text/html too):

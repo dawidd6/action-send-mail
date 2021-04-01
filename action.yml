@@ -35,6 +35,9 @@ inputs:
   bcc:
     description: Blind carbon copy recipients (separated with comma)
     required: false
+  ignore_cert:
+    description: Allow unsigned/invalid certificates
+    required: false
   content_type:
     description: Content-Type HTTP header (text/html or text/plain)
     required: false
