@@ -53,7 +53,7 @@ async function main() {
             auth: {
                 user: username,
                 pass: password,
-            }
+            },
             tls: ignoreCert ? {
                 rejectUnauthorized: false
             } : undefined
