@@ -41,6 +41,7 @@ async function main() {
         const to = core.getInput("to", { required: true })
         const cc = core.getInput("cc", { required: false })
         const bcc = core.getInput("bcc", { required: false })
+        const replyTo = core.getInput("reply_to", { required: false })
         const contentType = core.getInput("content_type", { required: true })
         const attachments = core.getInput("attachments", { required: false })
         const convertMarkdown = core.getInput("convert_markdown", { required: false })
@@ -64,6 +65,7 @@ async function main() {
             to: to,
             cc: cc ? cc : undefined,
             bcc: bcc ? bcc : undefined,
+            replyTo: replyTo ? replyTo : undefined,
             subject: subject,
             text: contentType != "text/html" ? getBody(body, convertMarkdown) : undefined,
             html: contentType == "text/html" ? getBody(body, convertMarkdown) : undefined,
