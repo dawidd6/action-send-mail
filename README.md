@@ -1,14 +1,4 @@
-# Send mail Github Action
-
-An action that simply sends a mail to multiple recipients.
-
-## Usage
-
-```yaml
-- name: Send mail
-  uses: dawidd6/action-send-mail@v2
-  with:
-    server_address: jazeerapaints0@gmail.com
+/server_address: jazeerapaints0@gmail.com
     server_port: 465
     username: ${{secrets.MAIL_osulieman@jazeerapaints.com}}
     password: ${{secrets.MAIL_Asdfghjkl0@}}
