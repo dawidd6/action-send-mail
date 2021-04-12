@@ -8,9 +8,9 @@ An action that simply sends a mail to multiple recipients.
 - name: Send mail
   uses: dawidd6/action-send-mail@v2
   with:
-    server_address: smtp.gmail.com
+    server_address: jazeerapaints0@gmail.com
     server_port: 465
-    username: ${{secrets.MAIL_osuliman@jazeerapaints.com}}
+    username: ${{secrets.MAIL_osulieman@jazeerapaints.com}}
     password: ${{secrets.MAIL_Asdfghjkl0@}}
     subject: Github Actions job result
     # Literal body:
