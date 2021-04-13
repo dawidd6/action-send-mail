@@ -35,7 +35,10 @@ An action that simply sends a mail to multiple recipients.
     attachments: attachments.zip,git.diff,./dist/static/main.js
 ```
 
-## Common GMAIL Problems
+## Troubleshooting
+
+### Gmail
+
 Gmail security settings may cause this Action to fail. This failure may involve a message in the GitHub Actions details about access being denied and an email from Google to the email account being used about a sign-in being blocked and why. 
 
 Changes in Gmail settings may be necessary to get this action to work.
