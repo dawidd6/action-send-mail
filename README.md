@@ -34,3 +34,13 @@ An action that simply sends a mail to multiple recipients.
     # Optional attachments:
     attachments: attachments.zip,git.diff,./dist/static/main.js
 ```
+
+## Common GMAIL Problems
+GMAIL security settings may cause this action to fail. This failure may involve a message in the GithubActions details about access being denied and an email from Google to the email account being used about a sign-in being blocked and why. 
+
+Changes in Gmail settings may be necessary to get this action to work.
+1. Google treats this method of using email as a "Less Secure App". However, "Less Secure Apps" can be enabled in google profile settings. There doesn't appear to be a static link for this, but if you go to google profile settings while signed-in and type "less secure apps" into the search bar, the appropriate instructions will come up. 
+2. IMAP needs to be enabled in gmail settings as described here: https://support.google.com/mail/answer/7126229?hl=en 
+3. If the gmail account you're trying to use in this action is already 2FA (Two Factor Authentication) enabled, the 2FA password will need to be provided as well, which isn't included in the default template.
+
+Users who have had problems have reported success by doing each of these three steps or by doing the first two steps and using a gmail account that didn't have 2FA enabled. 
