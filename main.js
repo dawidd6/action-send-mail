@@ -60,6 +60,23 @@ async function main() {
             } : undefined
         })
 
+        let htmlPart = undefined;
+        let plainPart = undefined;
+        switch (contentType) {
+            case 'text/html':
+                htmlPart = getBody(body, convertMarkdown);
+                break;
+            case 'text/plain':
+                plainPart = getBody(body, convertMarkdown);
+                break;
+            case 'multipart/alternative':
+                plainPart = getBody(body, convertMarkdown);
+                const html_body = core.getInput("html_body", { required: false })
+                htmlPart = getBody(html_body, convertMarkdown);
+                break;
+            default:
+                throw `invalid content_type: ${contentType}`;
+        }
         const info = await transport.sendMail({
             from: getFrom(from, username),
             to: to,
@@ -67,8 +84,8 @@ async function main() {
             bcc: bcc ? bcc : undefined,
             replyTo: replyTo ? replyTo : undefined,
             subject: subject,
-            text: contentType != "text/html" ? getBody(body, convertMarkdown) : undefined,
-            html: contentType == "text/html" ? getBody(body, convertMarkdown) : undefined,
+            text: plainPart,
+            html: htmlPart,
             attachments: attachments ? attachments.split(',').map(f => ({ path: f.trim() })) : undefined
         })
     } catch (error) {
