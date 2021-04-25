@@ -20,7 +20,7 @@ jobs:
               second line
           - subject: HTML body (attachments)
             attachments: package.json,package-lock.json
-            body: |
+            html_body: |
               <!DOCTYPE html>
               <html>
               <body>
