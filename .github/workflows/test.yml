@@ -50,6 +50,7 @@ jobs:
           password: ${{secrets.PASSWORD}}
           subject: ${{matrix.subject}}
           body: ${{matrix.body}}
+          html_body: ${{matrix.html_body}}
           to: ${{github.event.pusher.email}}
           from: github-actions
           attachments: ${{matrix.attachments}}
