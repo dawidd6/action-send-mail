@@ -2,11 +2,19 @@
 
 An action that simply sends a mail to multiple recipients.
 
+Some features:
+- plain text body
+- HTML body
+- multipart body (plain text + HTML)
+- Markdown to HTML converting
+- file attachments
+
+
 ## Usage
 
 ```yaml
 - name: Send mail
-  uses: dawidd6/action-send-mail@v2
+  uses: dawidd6/action-send-mail@v3
   with:
     # Required mail server address:
     server_address: smtp.gmail.com
