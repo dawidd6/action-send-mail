@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer")
 const core = require("@actions/core")
 const fs = require("fs")
-const showdown = require('showdown')
+const showdown = require("showdown")
 
 function getBody(bodyOrFile, convertMarkdown) {
     let body = bodyOrFile
@@ -22,7 +22,7 @@ function getBody(bodyOrFile, convertMarkdown) {
 }
 
 function getFrom(from, username) {
-    if (from.match(/.+<.+@.+>/)) {
+    if (from.match(/.+ <.+@.+>/)) {
         return from
     }
 
@@ -59,7 +59,7 @@ async function main() {
                 rejectUnauthorized: false
             } : undefined
         })
-        
+
         const info = await transport.sendMail({
             from: getFrom(from, username),
             to: to,
