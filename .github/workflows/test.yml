@@ -13,10 +13,12 @@ jobs:
       max-parallel: 1
       matrix:
         include:
-          - content_type: text/markdown
+          - subject: Plain body (attachment)
             attachments: action.yml
-            body: file://README.md
-          - content_type: text/html
+            body: |
+              first line
+              second line
+          - subject: HTML body (attachments)
             attachments: package.json,package-lock.json
             body: |
               <!DOCTYPE html>
@@ -26,16 +28,16 @@ jobs:
               <p>Paragraph</p>
               </body>
               </html>
-          - content_type: text/html
+          - subject: Plain body (Markdown)
             convert_markdown: true
-            body: |
-              # h1
-              ## h2
-              ### h3
-              **bold**
-              _italics_
-              - bullet 1
-              - bullet 2
+            body: file://README.md
+          - subject: HTML body (Markdown)
+            convert_markdown: true
+            html_body: file://README.md
+          - subject: Multipart body (Markdown)
+            convert_markdown: true
+            body: file://README.md
+            html_body: file://README.md
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -46,10 +48,9 @@ jobs:
           server_port: 465
           username: ${{secrets.USERNAME}}
           password: ${{secrets.PASSWORD}}
-          subject: ${{github.repository}}
+          subject: ${{matrix.subject}}
           body: ${{matrix.body}}
           to: ${{github.event.pusher.email}}
           from: github-actions
-          content_type: ${{matrix.content_type}}
-          convert_markdown: ${{matrix.convert_markdown}}
           attachments: ${{matrix.attachments}}
+          convert_markdown: ${{matrix.convert_markdown}}
