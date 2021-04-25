@@ -20,7 +20,7 @@ An action that simply sends a mail to multiple recipients.
     subject: Github Actions job result
     # Required recipients' addresses:
     to: obiwan@example.com,yoda@example.com
-    # Required sender information (address can be skipped):
+    # Required sender full name (address can be skipped):
     from: Luke Skywalker # <user@example.com>
     # Optional plain body:
     body: Build job of ${{github.repository}} completed successfully!
