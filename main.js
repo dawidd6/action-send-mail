@@ -67,7 +67,7 @@ async function main() {
             cc: cc ? cc : undefined,
             bcc: bcc ? bcc : undefined,
             replyTo: replyTo ? replyTo : undefined,
-            text: body ? getBody(body, convertMarkdown) : undefined,
+            text: body ? getBody(body, false) : undefined,
             html: htmlBody ? getBody(htmlBody, convertMarkdown) : undefined,
             attachments: attachments ? attachments.split(',').map(f => ({ path: f.trim() })) : undefined
         })
