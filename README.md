@@ -8,29 +8,32 @@ An action that simply sends a mail to multiple recipients.
 - name: Send mail
   uses: dawidd6/action-send-mail@v2
   with:
+    # Required mail server address:
     server_address: smtp.gmail.com
+    # Required mail server port:
     server_port: 465
+    # Required mail server username:
     username: ${{secrets.MAIL_USERNAME}}
+    # Required mail server password:
     password: ${{secrets.MAIL_PASSWORD}}
+    # Required mail subject:
     subject: Github Actions job result
-    # Literal body:
-    body: Build job of ${{github.repository}} completed successfully!
-    # Read file contents as body:
-    body: file://README.md
-    # HTML part in a multipart email, body field is used as text part
-    html_body: file://README.html
+    # Required recipients' addresses:
     to: obiwan@example.com,yoda@example.com
+    # Required sender information (address can be skipped):
     from: Luke Skywalker # <user@example.com>
-    # Optional carbon copy recipients
+    # Optional plain body:
+    body: Build job of ${{github.repository}} completed successfully!
+    # Optional HTML body read from file:
+    html_body: file://README.html
+    # Optional carbon copy recipients:
     cc: kyloren@example.com,leia@example.com
-    # Optional blind carbon copy recipients
+    # Optional blind carbon copy recipients:
     bcc: r2d2@example.com,hansolo@example.com
-    # Optional recipient of the email response
+    # Optional recipient of the email response:
     reply_to: luke@example.com
     # Optional unsigned/invalid certificates allowance:
     ignore_cert: true
-    # Optional content type (defaults to text/plain, other choice: multipart/alternative):
-    content_type: text/html
     # Optional converting Markdown to HTML (set content_type to text/html too):
     convert_markdown: true
     # Optional attachments:
