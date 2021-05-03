@@ -33,12 +33,12 @@ async function main() {
     try {
         const serverAddress = core.getInput("server_address", { required: true })
         const serverPort = core.getInput("server_port", { required: true })
-        const secure = core.getInput("secure", { required: false })
         const username = core.getInput("username", { required: true })
         const password = core.getInput("password", { required: true })
         const subject = core.getInput("subject", { required: true })
         const from = core.getInput("from", { required: true })
         const to = core.getInput("to", { required: true })
+        const secure = core.getInput("secure", { required: false })
         const body = core.getInput("body", { required: false })
         const htmlBody = core.getInput("html_body", { required: false })
         const cc = core.getInput("cc", { required: false })
