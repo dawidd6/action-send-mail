@@ -33,6 +33,7 @@ async function main() {
     try {
         const serverAddress = core.getInput("server_address", { required: true })
         const serverPort = core.getInput("server_port", { required: true })
+        const secure = core.getInput("secure", { required: serverPort == "465" })
         const username = core.getInput("username", { required: true })
         const password = core.getInput("password", { required: true })
         const subject = core.getInput("subject", { required: true })
@@ -50,7 +51,7 @@ async function main() {
         const transport = nodemailer.createTransport({
             host: serverAddress,
             port: serverPort,
-            secure: serverPort == "465",
+            secure: secure,
             auth: {
                 user: username,
                 pass: password,
