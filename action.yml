@@ -11,6 +11,9 @@ inputs:
   server_port:
     description: SMTP server port
     required: true
+  secure:
+    description: Whether this connection use TLS (default is true if server_port is 465)
+    required: false
   username:
     description: Authenticate as this user to SMTP server
     required: true
