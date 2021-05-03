@@ -30,6 +30,8 @@ Some features:
     to: obiwan@example.com,yoda@example.com
     # Required sender full name (address can be skipped):
     from: Luke Skywalker # <user@example.com>
+    # Optional whether this connection use TLS (default is true if server_port is 465)
+    secure: true
     # Optional plain body:
     body: Build job of ${{github.repository}} completed successfully!
     # Optional HTML body read from file:

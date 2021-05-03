@@ -26,6 +26,9 @@ inputs:
   from:
     description: Full name of mail sender (might be with an email address specified in <>)
     required: true
+  secure:
+    description: Whether this connection use TLS (default is true if server_port is 465)
+    required: false
   body:
     description: Body of mail message (might be a filename prefixed with file:// to read from)
     required: false
