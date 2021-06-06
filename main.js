@@ -8,8 +8,14 @@ function getBody(bodyOrFile, convertMarkdown) {
 
     // Read body from file
     if (bodyOrFile.startsWith("file://")) {
-        const file = bodyOrFile.replace("file://", "")
-        body = fs.readFileSync(file, "utf8")
+        const file = bodyOrFile.replace("file://", 
+		try {
+			body = fs.readFileSync(file, "utf8")
+			return body
+		} catch(error){
+			return ""
+		}
+		
     }
 
     // Convert Markdown to HTML
@@ -47,7 +53,9 @@ async function main() {
         const attachments = core.getInput("attachments", { required: false })
         const convertMarkdown = core.getInput("convert_markdown", { required: false })
         const ignoreCert = core.getInput("ignore_cert", { required: false })
-
+		if (body == ""){
+			return;
+		}
         const transport = nodemailer.createTransport({
             host: serverAddress,
             port: serverPort,
