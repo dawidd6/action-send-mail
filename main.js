@@ -13,8 +13,9 @@ function getBody(bodyOrFile, convertMarkdown) {
 			body = fs.readFileSync(file, "utf8")
 			return body
 		} catch(error){
-			return ""
+			body = ""
 		}
+		return body
 		
     }
 
