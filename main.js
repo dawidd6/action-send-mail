@@ -8,7 +8,7 @@ function getBody(bodyOrFile, convertMarkdown) {
 
     // Read body from file
     if (bodyOrFile.startsWith("file://")) {
-        const file = bodyOrFile.replace("file://", 
+        const file = bodyOrFile.replace("file://", "")
 		try {
 			body = fs.readFileSync(file, "utf8")
 			return body
