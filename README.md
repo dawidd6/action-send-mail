@@ -67,4 +67,4 @@ Users who have had problems have reported success by doing each of these three s
 ### Unauthenticated login (username/password fields)
 
 The parameters `username` and `password` are set as optional to support self-hosted runners access to on-premise infrastructure. If
-you are accessing public email provided make sure you provide a username/password authentication throuth [GitHub Secrets storage](https://docs.github.com/en/actions/reference/encrypted-secrets) to make the email delivery secure.
+you are accessing public email provided make sure you provide a username/password authentication through [GitHub Secrets](https://docs.github.com/en/actions/reference/encrypted-secrets) to make the email delivery secure.
