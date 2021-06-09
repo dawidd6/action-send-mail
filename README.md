@@ -12,7 +12,6 @@ Some features:
 
 ## Usage
 
-### Example
 ```yaml
 - name: Send mail
   uses: dawidd6/action-send-mail@v3
