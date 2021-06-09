@@ -49,24 +49,21 @@ async function main() {
         const ignoreCert = core.getInput("ignore_cert", { required: false })
 
         let auth = undefined
-        if (typeof(username) !== 'undefined' && typeof(password) !== 'undefined') {
-            auth = {
-                user: username,
-                pass: password,
-            }
-        } else {
+        if (!username || !password) {
             core.warning("Username and password not specified. You should only do this if you are using a self-hosted runner to access an on-premise mail server.")
         }
 
-
         const transport = nodemailer.createTransport({
             host: serverAddress,
+            auth: username && password ? {
+                user: username,
+                pass: password
+            } : undefined,
             port: serverPort,
             secure: secure ? true : serverPort == "465",
             tls: ignoreCert ? {
                 rejectUnauthorized: false
             } : undefined,
-            auth,
         })
 
         const info = await transport.sendMail({
