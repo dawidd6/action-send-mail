@@ -13,10 +13,10 @@ inputs:
     required: true
   username:
     description: Authenticate as this user to SMTP server
-    required: true
+    required: false
   password:
     description: Authenticate with this password to SMTP server
-    required: true
+    required: false
   subject:
     description: Subject of mail message
     required: true

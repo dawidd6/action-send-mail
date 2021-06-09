@@ -33,8 +33,8 @@ async function main() {
     try {
         const serverAddress = core.getInput("server_address", { required: true })
         const serverPort = core.getInput("server_port", { required: true })
-        const username = core.getInput("username", { required: true })
-        const password = core.getInput("password", { required: true })
+        const username = core.getInput("username")
+        const password = core.getInput("password")
         const subject = core.getInput("subject", { required: true })
         const from = core.getInput("from", { required: true })
         const to = core.getInput("to", { required: true })
@@ -48,17 +48,25 @@ async function main() {
         const convertMarkdown = core.getInput("convert_markdown", { required: false })
         const ignoreCert = core.getInput("ignore_cert", { required: false })
 
+        let auth = undefined
+        if (typeof(username) !== 'undefined' && typeof(password) !== 'undefined') {
+            auth = {
+                user: username,
+                pass: password,
+            }
+        } else {
+            core.warning("Username and password not specified. You should only do this if you are using a self-hosted runner to access an on-premise mail server.")
+        }
+
+
         const transport = nodemailer.createTransport({
             host: serverAddress,
             port: serverPort,
             secure: secure ? true : serverPort == "465",
-            auth: {
-                user: username,
-                pass: password,
-            },
             tls: ignoreCert ? {
                 rejectUnauthorized: false
-            } : undefined
+            } : undefined,
+            auth,
         })
 
         const info = await transport.sendMail({

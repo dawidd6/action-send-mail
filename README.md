@@ -12,6 +12,7 @@ Some features:
 
 ## Usage
 
+### Example
 ```yaml
 - name: Send mail
   uses: dawidd6/action-send-mail@v3
@@ -20,9 +21,9 @@ Some features:
     server_address: smtp.gmail.com
     # Required mail server port:
     server_port: 465
-    # Required mail server username:
+    # Optional (recommended): mail server username:
     username: ${{secrets.MAIL_USERNAME}}
-    # Required mail server password:
+    # Optional (recommended) mail server password:
     password: ${{secrets.MAIL_PASSWORD}}
     # Required mail subject:
     subject: Github Actions job result
@@ -62,3 +63,8 @@ Changes in Gmail settings may be necessary to get this action to work.
 3. If the Gmail account you're trying to use in this Action is already 2FA (Two Factor Authentication) enabled, the 2FA password will need to be provided as well, which isn't included in the default template.
 
 Users who have had problems have reported success by doing each of these three steps or by doing the first two steps and using a Gmail account that didn't have 2FA enabled.
+
+### Unauthenticated login (username/password fields)
+
+The parameters `username` and `password` are set as optional to support self-hosted runners access to on-premise infrastructure. If
+you are accessing public email provided make sure you provide a username/password authentication throuth [GitHub Secrets storage](https://docs.github.com/en/actions/reference/encrypted-secrets) to make the email delivery secure.
