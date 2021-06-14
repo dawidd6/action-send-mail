@@ -1,21 +1,6 @@
 {
   "name": "action-send-mail",
-  "version": "1.0.0",
-  "description": "An action that simply sends a mail to multiple recipients.",
   "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dawidd6/action-send-mail.git"
-  },
-  "author": "dawidd6",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/dawidd6/action-send-mail/issues"
-  },
-  "homepage": "https://github.com/dawidd6/action-send-mail#readme",
   "dependencies": {
     "@actions/core": "^1.2.7",
     "nodemailer": "^6.4.17",
