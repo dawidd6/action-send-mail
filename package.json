@@ -3,7 +3,7 @@
   "main": "main.js",
   "dependencies": {
     "@actions/core": "^1.2.7",
-    "nodemailer": "^6.4.17",
+    "nodemailer": "^6.6.2",
     "showdown": "^1.9.1"
   }
 }
