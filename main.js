@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer")
 const core = require("@actions/core")
+const glob = require("@actions/glob")
 const fs = require("fs")
 const showdown = require("showdown")
 
@@ -27,6 +28,12 @@ function getFrom(from, username) {
     }
 
     return `"${from}" <${username}>`
+}
+
+async function getAttachments(attachments) {
+    const globber = await glob.create(attachments.split(',').join('\n'))
+    const files = await globber.glob()
+    return files.map(f => ({ path: f }))
 }
 
 async function main() {
@@ -75,8 +82,8 @@ async function main() {
             replyTo: replyTo ? replyTo : undefined,
             text: body ? getBody(body, false) : undefined,
             html: htmlBody ? getBody(htmlBody, convertMarkdown) : undefined,
-            attachments: attachments ? attachments.split(',').map(f => ({ path: f.trim() })) : undefined,
             priority: priority ? priority : undefined,
+            attachments: attachments ? getAttachments(attachments) : undefined,
         })
     } catch (error) {
         core.setFailed(error.message)
