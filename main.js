@@ -9,7 +9,12 @@ function getBody(bodyOrFile, convertMarkdown) {
     // Read body from file
     if (bodyOrFile.startsWith("file://")) {
         const file = bodyOrFile.replace("file://", "")
-        body = fs.readFileSync(file, "utf8")
+        try {
+            body = fs.readFileSync(file, "utf8")
+        }
+        catch(error){
+            body = ""
+        }
     }
 
     // Convert Markdown to HTML
