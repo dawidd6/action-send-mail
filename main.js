@@ -52,10 +52,10 @@ async function main() {
         const attachments = core.getInput("attachments", { required: false })
         const convertMarkdown = core.getInput("convert_markdown", { required: false })
         const ignoreCert = core.getInput("ignore_cert", { required: false })
-        if (body==''){
-            core.warning("email content is empty")
-            return
-        }
+//         if (body==''){
+//             core.warning("email content is empty")
+//             return
+//         }
         if (!username || !password) {
             core.warning("Username and password not specified. You should only do this if you are using a self-hosted runner to access an on-premise mail server.")
         }
@@ -72,7 +72,12 @@ async function main() {
                 rejectUnauthorized: false
             } : undefined,
         })
-
+        
+        if (getBody(body, false) == ''){
+            core.warning("email content is empty")
+            return
+        }
+        
         const info = await transport.sendMail({
             from: getFrom(from, username),
             to: to,
