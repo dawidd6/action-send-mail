@@ -52,7 +52,7 @@ async function main() {
         const attachments = core.getInput("attachments", { required: false })
         const convertMarkdown = core.getInput("convert_markdown", { required: false })
         const ignoreCert = core.getInput("ignore_cert", { required: false })
-        if (!body){
+        if (body==''){
             core.warning("email content is empty")
             return
         }
