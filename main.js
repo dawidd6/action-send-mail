@@ -73,7 +73,7 @@ async function main() {
             } : undefined,
         })
         
-        if (getBody(body, false) == ''){
+        if (getBody(body, false) == '' && getBody(htmlBody, false) == ''){
             core.warning("email content is empty")
             return
         }
