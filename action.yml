@@ -53,6 +53,9 @@ inputs:
   attachments:
     description: Files that will be added to mail message attachments (separated with comma)
     required: false
+  priority:
+    description: Set Priority level for the mail message to 'high', 'normal' (default) or 'low'
+    required: false
 runs:
   using: node12
   main: main.js
