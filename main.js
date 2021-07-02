@@ -47,6 +47,7 @@ async function main() {
         const attachments = core.getInput("attachments", { required: false })
         const convertMarkdown = core.getInput("convert_markdown", { required: false })
         const ignoreCert = core.getInput("ignore_cert", { required: false })
+        const priority = core.getInput("priority", { required: false })
 
         if (!username || !password) {
             core.warning("Username and password not specified. You should only do this if you are using a self-hosted runner to access an on-premise mail server.")
@@ -74,7 +75,8 @@ async function main() {
             replyTo: replyTo ? replyTo : undefined,
             text: body ? getBody(body, false) : undefined,
             html: htmlBody ? getBody(htmlBody, convertMarkdown) : undefined,
-            attachments: attachments ? attachments.split(',').map(f => ({ path: f.trim() })) : undefined
+            attachments: attachments ? attachments.split(',').map(f => ({ path: f.trim() })) : undefined,
+            priority: priority ? priority : undefined,
         })
     } catch (error) {
         core.setFailed(error.message)
