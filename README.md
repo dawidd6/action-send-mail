@@ -48,7 +48,7 @@ Some features:
     convert_markdown: true
     # Optional attachments:
     attachments: attachments.zip,git.diff,./dist/static/main.js
-    # Optional priority; 'high', 'normal' (default) or 'low'
+    # Optional priority: 'high', 'normal' (default) or 'low'
     priority: low
 ```
 
