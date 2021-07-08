@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer")
 const core = require("@actions/core")
 const fs = require("fs")
 const showdown = require("showdown")
-const glob = require("glob")
+const glob = require("@actions/glob")
 
 function getBody(bodyOrFile, convertMarkdown) {
     let body = bodyOrFile
@@ -30,11 +30,9 @@ function getFrom(from, username) {
     return `"${from}" <${username}>`
 }
 
-function getAttachments(attachments) {
-    return attachments.split(',')
-        .map(f => glob.sync(f.trim()))
-        .flat()
-        .map(f => ({ path: f.trim() }));
+async function getAttachments(attachments) {
+    const files = await (await glob.create(attachments.join('\n'))).glob()
+    return files;
 }
 
 async function main() {
