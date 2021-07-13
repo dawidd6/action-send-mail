@@ -33,7 +33,7 @@ function getFrom(from, username) {
 async function getAttachments(attachments) {
     const globber = await glob.create(attachments.split(',').join('\n'))
     const files = await globber.glob()
-    return files
+    return files.map(f => ({ path: f }))
 }
 
 async function main() {
@@ -72,8 +72,6 @@ async function main() {
                 rejectUnauthorized: false
             } : undefined,
         })
-
-        console.log(await getAttachments(attachments))
 
         const info = await transport.sendMail({
             from: getFrom(from, username),
