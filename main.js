@@ -73,6 +73,8 @@ async function main() {
             } : undefined,
         })
 
+        console.log(await getAttachments(attachments))
+
         const info = await transport.sendMail({
             from: getFrom(from, username),
             to: to,
