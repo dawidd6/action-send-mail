@@ -33,7 +33,7 @@ function getFrom(from, username) {
 async function getAttachments(attachments) {
     const globber = await glob.create(attachments.split(',').join('\n'))
     const files = await globber.glob()
-    return files.map(f => ({ path: f }))
+    return files
 }
 
 async function main() {
@@ -83,7 +83,7 @@ async function main() {
             text: body ? getBody(body, false) : undefined,
             html: htmlBody ? getBody(htmlBody, convertMarkdown) : undefined,
             priority: priority ? priority : undefined,
-            attachments: attachments ? getAttachments(attachments) : undefined,
+            attachments: attachments ? (await getAttachments(attachments)) : undefined,
         })
     } catch (error) {
         core.setFailed(error.message)
