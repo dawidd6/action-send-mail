@@ -7,7 +7,7 @@ Some features:
 - HTML body
 - multipart body (plain text + HTML)
 - Markdown to HTML converting
-- file attachments
+- file attachments (supports globbing)
 
 
 ## Usage
@@ -47,7 +47,7 @@ Some features:
     # Optional converting Markdown to HTML (set content_type to text/html too):
     convert_markdown: true
     # Optional attachments:
-    attachments: attachments.zip,git.diff,./dist/static/main.js
+    attachments: attachments.zip,git.diff,./dist/static/*.js
     # Optional priority: 'high', 'normal' (default) or 'low'
     priority: low
 ```
