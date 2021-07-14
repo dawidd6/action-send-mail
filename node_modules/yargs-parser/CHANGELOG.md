@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [15.0.3](https://www.github.com/yargs/yargs-parser/compare/yargs-parser-v15.0.2...yargs-parser-v15.0.3) (2021-06-20)
+
+
+### Bug Fixes
+
+* **build:** should use releases_created when using manifest ([49ea4ef](https://www.github.com/yargs/yargs-parser/commit/49ea4ef042f7d9af78d7bb4090a5f37bff067bc3))
+
+### [15.0.2](https://www.github.com/yargs/yargs-parser/compare/yargs-parser-v15.0.1...yargs-parser-v15.0.2) (2021-06-20)
+
+
+### Bug Fixes
+
+* **perf:** address slow parse when using unknown-options-as-args ([#400](https://www.github.com/yargs/yargs-parser/issues/400)) ([bc387ec](https://www.github.com/yargs/yargs-parser/commit/bc387ec5825cf4a79376709782c7903737e86715))
+
 ## [15.0.0](https://github.com/yargs/yargs-parser/compare/v14.0.0...v15.0.0) (2019-10-07)
 
 

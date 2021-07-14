@@ -813,6 +813,7 @@ function parse (args, opts) {
   }
 
   function isUnknownOption (arg) {
+    arg = arg.replace(/^-{3,}/, '---')
     // ignore negative numbers
     if (arg.match(negative)) { return false }
     // if this is a short option group and all of them are configured, it isn't unknown

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 
+### [4.0.3](https://www.github.com/yargs/y18n/compare/y18n-v4.0.2...y18n-v4.0.3) (2021-04-07)
+
+
+### Bug Fixes
+
+* **release:** 4.x.x should not enforce Node 10 ([#126](https://www.github.com/yargs/y18n/issues/126)) ([1e21a53](https://www.github.com/yargs/y18n/commit/1e21a536e9135d8403a47be88922157a706b7cde))
+
 ### 4.0.1 (2020-11-30)
 
 ### Bug Fixes
