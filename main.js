@@ -33,7 +33,7 @@ function getFrom(from, username) {
 async function getAttachments(attachments) {
     const globber = await glob.create(attachments.split(',').join('\n'))
     const files = await globber.glob()
-    return files.map(f => ({ path: f }))
+    return files.map(f => ({ path: f, cid: f}))
 }
 
 async function main() {
