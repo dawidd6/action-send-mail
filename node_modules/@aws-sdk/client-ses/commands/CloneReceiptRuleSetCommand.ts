@@ -17,8 +17,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type CloneReceiptRuleSetCommandInput = CloneReceiptRuleSetRequest;
-export type CloneReceiptRuleSetCommandOutput = CloneReceiptRuleSetResponse & __MetadataBearer;
+export interface CloneReceiptRuleSetCommandInput extends CloneReceiptRuleSetRequest {}
+export interface CloneReceiptRuleSetCommandOutput extends CloneReceiptRuleSetResponse, __MetadataBearer {}
 
 /**
  * <p>Creates a receipt rule set by cloning an existing one. All receipt rules and
@@ -27,6 +27,20 @@ export type CloneReceiptRuleSetCommandOutput = CloneReceiptRuleSetResponse & __M
  *         <p>For information about setting up rule sets, see the <a href="https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-receipt-rule-set.html">Amazon SES
  *                 Developer Guide</a>.</p>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, CloneReceiptRuleSetCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, CloneReceiptRuleSetCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new CloneReceiptRuleSetCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link CloneReceiptRuleSetCommandInput} for command's `input` shape.
+ * @see {@link CloneReceiptRuleSetCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class CloneReceiptRuleSetCommand extends $Command<
   CloneReceiptRuleSetCommandInput,

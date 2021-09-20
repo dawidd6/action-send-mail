@@ -17,8 +17,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type UpdateConfigurationSetSendingEnabledCommandInput = UpdateConfigurationSetSendingEnabledRequest;
-export type UpdateConfigurationSetSendingEnabledCommandOutput = __MetadataBearer;
+export interface UpdateConfigurationSetSendingEnabledCommandInput extends UpdateConfigurationSetSendingEnabledRequest {}
+export interface UpdateConfigurationSetSendingEnabledCommandOutput extends __MetadataBearer {}
 
 /**
  * <p>Enables or disables email sending for messages sent using a specific configuration set
@@ -27,6 +27,20 @@ export type UpdateConfigurationSetSendingEnabledCommandOutput = __MetadataBearer
  *             for that configuration set (such as your bounce on complaint rate) exceed certain
  *             thresholds.</p>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, UpdateConfigurationSetSendingEnabledCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, UpdateConfigurationSetSendingEnabledCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new UpdateConfigurationSetSendingEnabledCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link UpdateConfigurationSetSendingEnabledCommandInput} for command's `input` shape.
+ * @see {@link UpdateConfigurationSetSendingEnabledCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class UpdateConfigurationSetSendingEnabledCommand extends $Command<
   UpdateConfigurationSetSendingEnabledCommandInput,

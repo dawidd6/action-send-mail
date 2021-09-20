@@ -17,8 +17,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type DeleteIdentityPolicyCommandInput = DeleteIdentityPolicyRequest;
-export type DeleteIdentityPolicyCommandOutput = DeleteIdentityPolicyResponse & __MetadataBearer;
+export interface DeleteIdentityPolicyCommandInput extends DeleteIdentityPolicyRequest {}
+export interface DeleteIdentityPolicyCommandOutput extends DeleteIdentityPolicyResponse, __MetadataBearer {}
 
 /**
  * <p>Deletes the specified sending authorization policy for the given identity (an email
@@ -33,6 +33,20 @@ export type DeleteIdentityPolicyCommandOutput = DeleteIdentityPolicyResponse & _
  *             the <a href="https://docs.aws.amazon.com/ses/latest/DeveloperGuide/sending-authorization.html">Amazon SES Developer
  *                 Guide</a>.</p>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, DeleteIdentityPolicyCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, DeleteIdentityPolicyCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new DeleteIdentityPolicyCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link DeleteIdentityPolicyCommandInput} for command's `input` shape.
+ * @see {@link DeleteIdentityPolicyCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class DeleteIdentityPolicyCommand extends $Command<
   DeleteIdentityPolicyCommandInput,

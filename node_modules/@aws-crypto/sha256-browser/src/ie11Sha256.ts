@@ -47,13 +47,13 @@ export class Sha256 implements Hash {
       operation =>
         new Promise((resolve, reject) => {
           operation.onerror = () => {
-            reject("Error encountered finalizing hash");
+            reject(new Error("Error encountered finalizing hash"));
           };
           operation.oncomplete = () => {
             if (operation.result) {
               resolve(new Uint8Array(operation.result));
             }
-            reject("Error encountered finalizing hash");
+            reject(new Error("Error encountered finalizing hash"));
           };
 
           operation.finish();
@@ -77,10 +77,10 @@ function getKeyPromise(secret: SourceData): Promise<Key> {
         resolve(keyOperation.result);
       }
 
-      reject("ImportKey completed without importing key.");
+      reject(new Error("ImportKey completed without importing key."));
     };
     keyOperation.onerror = () => {
-      reject("ImportKey failed to import key.");
+      reject(new Error("ImportKey failed to import key."));
     };
   });
 }

@@ -17,14 +17,28 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type DescribeConfigurationSetCommandInput = DescribeConfigurationSetRequest;
-export type DescribeConfigurationSetCommandOutput = DescribeConfigurationSetResponse & __MetadataBearer;
+export interface DescribeConfigurationSetCommandInput extends DescribeConfigurationSetRequest {}
+export interface DescribeConfigurationSetCommandOutput extends DescribeConfigurationSetResponse, __MetadataBearer {}
 
 /**
  * <p>Returns the details of the specified configuration set. For information about using
  *             configuration sets, see the <a href="https://docs.aws.amazon.com/ses/latest/DeveloperGuide/monitor-sending-activity.html">Amazon SES Developer
  *                 Guide</a>.</p>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, DescribeConfigurationSetCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, DescribeConfigurationSetCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new DescribeConfigurationSetCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link DescribeConfigurationSetCommandInput} for command's `input` shape.
+ * @see {@link DescribeConfigurationSetCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class DescribeConfigurationSetCommand extends $Command<
   DescribeConfigurationSetCommandInput,

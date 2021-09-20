@@ -17,8 +17,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type SendBulkTemplatedEmailCommandInput = SendBulkTemplatedEmailRequest;
-export type SendBulkTemplatedEmailCommandOutput = SendBulkTemplatedEmailResponse & __MetadataBearer;
+export interface SendBulkTemplatedEmailCommandInput extends SendBulkTemplatedEmailRequest {}
+export interface SendBulkTemplatedEmailCommandOutput extends SendBulkTemplatedEmailResponse, __MetadataBearer {}
 
 /**
  * <p>Composes an email message to multiple destinations. The message body is created using
@@ -64,6 +64,20 @@ export type SendBulkTemplatedEmailCommandOutput = SendBulkTemplatedEmailResponse
  *                     limited by your account's maximum sending rate.</p>
  *             </li>
  *          </ul>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, SendBulkTemplatedEmailCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, SendBulkTemplatedEmailCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new SendBulkTemplatedEmailCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link SendBulkTemplatedEmailCommandInput} for command's `input` shape.
+ * @see {@link SendBulkTemplatedEmailCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class SendBulkTemplatedEmailCommand extends $Command<
   SendBulkTemplatedEmailCommandInput,

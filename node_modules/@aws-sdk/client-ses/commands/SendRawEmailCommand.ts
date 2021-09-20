@@ -14,8 +14,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type SendRawEmailCommandInput = SendRawEmailRequest;
-export type SendRawEmailCommandOutput = SendRawEmailResponse & __MetadataBearer;
+export interface SendRawEmailCommandInput extends SendRawEmailRequest {}
+export interface SendRawEmailCommandOutput extends SendRawEmailResponse, __MetadataBearer {}
 
 /**
  * <p>Composes an email message and immediately queues it for sending.</p>
@@ -127,6 +127,20 @@ export type SendRawEmailCommandOutput = SendRawEmailResponse & __MetadataBearer;
  *                </p>
  *             </li>
  *          </ul>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, SendRawEmailCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, SendRawEmailCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new SendRawEmailCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link SendRawEmailCommandInput} for command's `input` shape.
+ * @see {@link SendRawEmailCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class SendRawEmailCommand extends $Command<
   SendRawEmailCommandInput,

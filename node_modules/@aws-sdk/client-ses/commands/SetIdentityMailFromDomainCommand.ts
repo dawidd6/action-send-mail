@@ -17,8 +17,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type SetIdentityMailFromDomainCommandInput = SetIdentityMailFromDomainRequest;
-export type SetIdentityMailFromDomainCommandOutput = SetIdentityMailFromDomainResponse & __MetadataBearer;
+export interface SetIdentityMailFromDomainCommandInput extends SetIdentityMailFromDomainRequest {}
+export interface SetIdentityMailFromDomainCommandOutput extends SetIdentityMailFromDomainResponse, __MetadataBearer {}
 
 /**
  * <p>Enables or disables the custom MAIL FROM domain setup for a verified identity (an
@@ -31,6 +31,20 @@ export type SetIdentityMailFromDomainCommandOutput = SetIdentityMailFromDomainRe
  *                 Guide</a>.</p>
  *         </important>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, SetIdentityMailFromDomainCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, SetIdentityMailFromDomainCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new SetIdentityMailFromDomainCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link SetIdentityMailFromDomainCommandInput} for command's `input` shape.
+ * @see {@link SetIdentityMailFromDomainCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class SetIdentityMailFromDomainCommand extends $Command<
   SetIdentityMailFromDomainCommandInput,

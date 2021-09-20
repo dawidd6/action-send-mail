@@ -17,14 +17,28 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type GetSendStatisticsCommandInput = {};
-export type GetSendStatisticsCommandOutput = GetSendStatisticsResponse & __MetadataBearer;
+export interface GetSendStatisticsCommandInput {}
+export interface GetSendStatisticsCommandOutput extends GetSendStatisticsResponse, __MetadataBearer {}
 
 /**
  * <p>Provides sending statistics for the current AWS Region. The result is a list of data
  *             points, representing the last two weeks of sending activity. Each data point in the list
  *             contains statistics for a 15-minute period of time.</p>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, GetSendStatisticsCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, GetSendStatisticsCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new GetSendStatisticsCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link GetSendStatisticsCommandInput} for command's `input` shape.
+ * @see {@link GetSendStatisticsCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class GetSendStatisticsCommand extends $Command<
   GetSendStatisticsCommandInput,

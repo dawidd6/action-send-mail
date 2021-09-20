@@ -1,7 +1,7 @@
 import { BLOCK_SIZE } from "./constants";
 import { RawSha256 } from "./RawSha256";
 import { Hash, SourceData } from "@aws-sdk/types";
-import { fromUtf8 } from "@aws-sdk/util-utf8-browser";
+import { isEmptyData, convertToBuffer } from "@aws-crypto/util";
 
 export class Sha256 implements Hash {
   private readonly hash = new RawSha256();
@@ -83,28 +83,4 @@ function bufferFromSecret(secret: SourceData): Uint8Array {
   const buffer = new Uint8Array(BLOCK_SIZE);
   buffer.set(input);
   return buffer;
-}
-
-function isEmptyData(data: SourceData): boolean {
-  if (typeof data === "string") {
-    return data.length === 0;
-  }
-
-  return data.byteLength === 0;
-}
-
-function convertToBuffer(data: SourceData): Uint8Array {
-  if (typeof data === "string") {
-    return fromUtf8(data);
-  }
-
-  if (ArrayBuffer.isView(data)) {
-    return new Uint8Array(
-      data.buffer,
-      data.byteOffset,
-      data.byteLength / Uint8Array.BYTES_PER_ELEMENT
-    );
-  }
-
-  return new Uint8Array(data);
 }

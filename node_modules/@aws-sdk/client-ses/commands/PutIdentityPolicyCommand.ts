@@ -17,8 +17,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type PutIdentityPolicyCommandInput = PutIdentityPolicyRequest;
-export type PutIdentityPolicyCommandOutput = PutIdentityPolicyResponse & __MetadataBearer;
+export interface PutIdentityPolicyCommandInput extends PutIdentityPolicyRequest {}
+export interface PutIdentityPolicyCommandOutput extends PutIdentityPolicyResponse, __MetadataBearer {}
 
 /**
  * <p>Adds or updates a sending authorization policy for the specified identity (an email
@@ -32,6 +32,20 @@ export type PutIdentityPolicyCommandOutput = PutIdentityPolicyResponse & __Metad
  *             the <a href="https://docs.aws.amazon.com/ses/latest/DeveloperGuide/sending-authorization.html">Amazon SES Developer
  *                 Guide</a>.</p>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, PutIdentityPolicyCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, PutIdentityPolicyCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new PutIdentityPolicyCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link PutIdentityPolicyCommandInput} for command's `input` shape.
+ * @see {@link PutIdentityPolicyCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class PutIdentityPolicyCommand extends $Command<
   PutIdentityPolicyCommandInput,

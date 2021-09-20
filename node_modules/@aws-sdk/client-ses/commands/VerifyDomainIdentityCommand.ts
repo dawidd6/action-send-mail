@@ -17,8 +17,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type VerifyDomainIdentityCommandInput = VerifyDomainIdentityRequest;
-export type VerifyDomainIdentityCommandOutput = VerifyDomainIdentityResponse & __MetadataBearer;
+export interface VerifyDomainIdentityCommandInput extends VerifyDomainIdentityRequest {}
+export interface VerifyDomainIdentityCommandOutput extends VerifyDomainIdentityResponse, __MetadataBearer {}
 
 /**
  * <p>Adds a domain to the list of identities for your Amazon SES account in the current AWS
@@ -28,6 +28,20 @@ export type VerifyDomainIdentityCommandOutput = VerifyDomainIdentityResponse & _
  *             Guide.</i>
  *          </p>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, VerifyDomainIdentityCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, VerifyDomainIdentityCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new VerifyDomainIdentityCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link VerifyDomainIdentityCommandInput} for command's `input` shape.
+ * @see {@link VerifyDomainIdentityCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class VerifyDomainIdentityCommand extends $Command<
   VerifyDomainIdentityCommandInput,

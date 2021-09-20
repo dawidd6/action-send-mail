@@ -17,8 +17,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type ListIdentityPoliciesCommandInput = ListIdentityPoliciesRequest;
-export type ListIdentityPoliciesCommandOutput = ListIdentityPoliciesResponse & __MetadataBearer;
+export interface ListIdentityPoliciesCommandInput extends ListIdentityPoliciesRequest {}
+export interface ListIdentityPoliciesCommandOutput extends ListIdentityPoliciesResponse, __MetadataBearer {}
 
 /**
  * <p>Returns a list of sending authorization policies that are attached to the given
@@ -33,6 +33,20 @@ export type ListIdentityPoliciesCommandOutput = ListIdentityPoliciesResponse & _
  *             the <a href="https://docs.aws.amazon.com/ses/latest/DeveloperGuide/sending-authorization.html">Amazon SES Developer
  *                 Guide</a>.</p>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, ListIdentityPoliciesCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, ListIdentityPoliciesCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new ListIdentityPoliciesCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link ListIdentityPoliciesCommandInput} for command's `input` shape.
+ * @see {@link ListIdentityPoliciesCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class ListIdentityPoliciesCommand extends $Command<
   ListIdentityPoliciesCommandInput,

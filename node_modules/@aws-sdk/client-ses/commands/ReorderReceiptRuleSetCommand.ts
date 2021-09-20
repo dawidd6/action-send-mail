@@ -17,8 +17,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type ReorderReceiptRuleSetCommandInput = ReorderReceiptRuleSetRequest;
-export type ReorderReceiptRuleSetCommandOutput = ReorderReceiptRuleSetResponse & __MetadataBearer;
+export interface ReorderReceiptRuleSetCommandInput extends ReorderReceiptRuleSetRequest {}
+export interface ReorderReceiptRuleSetCommandOutput extends ReorderReceiptRuleSetResponse, __MetadataBearer {}
 
 /**
  * <p>Reorders the receipt rules within a receipt rule set.</p>
@@ -29,6 +29,20 @@ export type ReorderReceiptRuleSetCommandOutput = ReorderReceiptRuleSetResponse &
  *         </note>
  *         <p>For information about managing receipt rule sets, see the <a href="https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-managing-receipt-rule-sets.html">Amazon SES Developer Guide</a>.</p>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, ReorderReceiptRuleSetCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, ReorderReceiptRuleSetCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new ReorderReceiptRuleSetCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link ReorderReceiptRuleSetCommandInput} for command's `input` shape.
+ * @see {@link ReorderReceiptRuleSetCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class ReorderReceiptRuleSetCommand extends $Command<
   ReorderReceiptRuleSetCommandInput,

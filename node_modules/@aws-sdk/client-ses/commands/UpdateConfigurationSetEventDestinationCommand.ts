@@ -20,9 +20,11 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type UpdateConfigurationSetEventDestinationCommandInput = UpdateConfigurationSetEventDestinationRequest;
-export type UpdateConfigurationSetEventDestinationCommandOutput = UpdateConfigurationSetEventDestinationResponse &
-  __MetadataBearer;
+export interface UpdateConfigurationSetEventDestinationCommandInput
+  extends UpdateConfigurationSetEventDestinationRequest {}
+export interface UpdateConfigurationSetEventDestinationCommandOutput
+  extends UpdateConfigurationSetEventDestinationResponse,
+    __MetadataBearer {}
 
 /**
  * <p>Updates the event destination of a configuration set. Event destinations are
@@ -37,6 +39,20 @@ export type UpdateConfigurationSetEventDestinationCommandOutput = UpdateConfigur
  *                 (Amazon SNS).</p>
  *         </note>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, UpdateConfigurationSetEventDestinationCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, UpdateConfigurationSetEventDestinationCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new UpdateConfigurationSetEventDestinationCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link UpdateConfigurationSetEventDestinationCommandInput} for command's `input` shape.
+ * @see {@link UpdateConfigurationSetEventDestinationCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class UpdateConfigurationSetEventDestinationCommand extends $Command<
   UpdateConfigurationSetEventDestinationCommandInput,

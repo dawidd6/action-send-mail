@@ -17,12 +17,26 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type DeleteTemplateCommandInput = DeleteTemplateRequest;
-export type DeleteTemplateCommandOutput = DeleteTemplateResponse & __MetadataBearer;
+export interface DeleteTemplateCommandInput extends DeleteTemplateRequest {}
+export interface DeleteTemplateCommandOutput extends DeleteTemplateResponse, __MetadataBearer {}
 
 /**
  * <p>Deletes an email template.</p>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, DeleteTemplateCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, DeleteTemplateCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new DeleteTemplateCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link DeleteTemplateCommandInput} for command's `input` shape.
+ * @see {@link DeleteTemplateCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class DeleteTemplateCommand extends $Command<
   DeleteTemplateCommandInput,

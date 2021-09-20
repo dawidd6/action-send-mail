@@ -17,8 +17,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type SetIdentityDkimEnabledCommandInput = SetIdentityDkimEnabledRequest;
-export type SetIdentityDkimEnabledCommandOutput = SetIdentityDkimEnabledResponse & __MetadataBearer;
+export interface SetIdentityDkimEnabledCommandInput extends SetIdentityDkimEnabledRequest {}
+export interface SetIdentityDkimEnabledCommandOutput extends SetIdentityDkimEnabledResponse, __MetadataBearer {}
 
 /**
  * <p>Enables or disables Easy DKIM signing of email sent from an identity. If Easy DKIM
@@ -34,6 +34,20 @@ export type SetIdentityDkimEnabledCommandOutput = SetIdentityDkimEnabledResponse
  *             verification process for the identity, even if the verification process isn't complete. </p>
  *         <p>You can execute this operation no more than once per second.</p>
  *         <p>For more information about Easy DKIM signing, go to the <a href="https://docs.aws.amazon.com/ses/latest/DeveloperGuide/easy-dkim.html">Amazon SES Developer Guide</a>.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, SetIdentityDkimEnabledCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, SetIdentityDkimEnabledCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new SetIdentityDkimEnabledCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link SetIdentityDkimEnabledCommandInput} for command's `input` shape.
+ * @see {@link SetIdentityDkimEnabledCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class SetIdentityDkimEnabledCommand extends $Command<
   SetIdentityDkimEnabledCommandInput,

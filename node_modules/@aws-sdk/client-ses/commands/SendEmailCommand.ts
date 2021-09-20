@@ -14,8 +14,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type SendEmailCommandInput = SendEmailRequest;
-export type SendEmailCommandOutput = SendEmailResponse & __MetadataBearer;
+export interface SendEmailCommandInput extends SendEmailRequest {}
+export interface SendEmailCommandOutput extends SendEmailResponse, __MetadataBearer {}
 
 /**
  * <p>Composes an email message and immediately queues it for sending. In order to send
@@ -63,6 +63,20 @@ export type SendEmailCommandOutput = SendEmailResponse & __MetadataBearer;
  *                     Sending Limits</a> in the <i>Amazon SES Developer Guide.</i>
  *             </p>
  *         </important>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new SendEmailCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link SendEmailCommandInput} for command's `input` shape.
+ * @see {@link SendEmailCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class SendEmailCommand extends $Command<SendEmailCommandInput, SendEmailCommandOutput, SESClientResolvedConfig> {
   // Start section: command_properties

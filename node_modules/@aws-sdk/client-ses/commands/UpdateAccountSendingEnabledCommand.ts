@@ -17,8 +17,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type UpdateAccountSendingEnabledCommandInput = UpdateAccountSendingEnabledRequest;
-export type UpdateAccountSendingEnabledCommandOutput = __MetadataBearer;
+export interface UpdateAccountSendingEnabledCommandInput extends UpdateAccountSendingEnabledRequest {}
+export interface UpdateAccountSendingEnabledCommandOutput extends __MetadataBearer {}
 
 /**
  * <p>Enables or disables email sending across your entire Amazon SES account in the current
@@ -27,6 +27,20 @@ export type UpdateAccountSendingEnabledCommandOutput = __MetadataBearer;
  *             reputation metrics (such as your bounce or complaint rates) reach certain
  *             thresholds.</p>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, UpdateAccountSendingEnabledCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, UpdateAccountSendingEnabledCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new UpdateAccountSendingEnabledCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link UpdateAccountSendingEnabledCommandInput} for command's `input` shape.
+ * @see {@link UpdateAccountSendingEnabledCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class UpdateAccountSendingEnabledCommand extends $Command<
   UpdateAccountSendingEnabledCommandInput,

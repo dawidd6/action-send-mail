@@ -17,12 +17,26 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type ListVerifiedEmailAddressesCommandInput = {};
-export type ListVerifiedEmailAddressesCommandOutput = ListVerifiedEmailAddressesResponse & __MetadataBearer;
+export interface ListVerifiedEmailAddressesCommandInput {}
+export interface ListVerifiedEmailAddressesCommandOutput extends ListVerifiedEmailAddressesResponse, __MetadataBearer {}
 
 /**
  * <p>Deprecated. Use the <code>ListIdentities</code> operation to list the email addresses
  *             and domains associated with your account.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, ListVerifiedEmailAddressesCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, ListVerifiedEmailAddressesCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new ListVerifiedEmailAddressesCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link ListVerifiedEmailAddressesCommandInput} for command's `input` shape.
+ * @see {@link ListVerifiedEmailAddressesCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class ListVerifiedEmailAddressesCommand extends $Command<
   ListVerifiedEmailAddressesCommandInput,

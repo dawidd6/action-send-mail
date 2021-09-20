@@ -14,8 +14,8 @@ import {
   SerdeContext as __SerdeContext,
 } from "@aws-sdk/types";
 
-export type SendBounceCommandInput = SendBounceRequest;
-export type SendBounceCommandOutput = SendBounceResponse & __MetadataBearer;
+export interface SendBounceCommandInput extends SendBounceRequest {}
+export interface SendBounceCommandOutput extends SendBounceResponse, __MetadataBearer {}
 
 /**
  * <p>Generates and sends a bounce message to the sender of an email you received through
@@ -27,6 +27,20 @@ export type SendBounceCommandOutput = SendBounceResponse & __MetadataBearer;
  *         <p>For information about receiving email through Amazon SES, see the <a href="https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email.html">Amazon SES
  *                 Developer Guide</a>.</p>
  *         <p>You can execute this operation no more than once per second.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SESClient, SendBounceCommand } from "@aws-sdk/client-ses"; // ES Modules import
+ * // const { SESClient, SendBounceCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+ * const client = new SESClient(config);
+ * const command = new SendBounceCommand(input);
+ * const response = await client.send(command);
+ * ```
+ *
+ * @see {@link SendBounceCommandInput} for command's `input` shape.
+ * @see {@link SendBounceCommandOutput} for command's `response` shape.
+ * @see {@link SESClientResolvedConfig | config} for command's `input` shape.
+ *
  */
 export class SendBounceCommand extends $Command<
   SendBounceCommandInput,

@@ -18,7 +18,7 @@
   "homepage": "https://github.com/dawidd6/action-send-mail#readme",
   "dependencies": {
     "@actions/core": "^1.2.6",
-    "@aws-sdk/client-ses": "^3.9.0",
+    "@aws-sdk/client-ses": "^3.32.0",
     "nodemailer": "^6.4.17",
     "showdown": "^1.9.1"
   }
