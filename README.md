@@ -42,6 +42,8 @@ Some features:
     bcc: r2d2@example.com,hansolo@example.com
     # Optional recipient of the email response:
     reply_to: luke@example.com
+    # Optional Message ID this message is replying to:
+    in_reply_to: <random-luke@example.com>
     # Optional unsigned/invalid certificates allowance:
     ignore_cert: true
     # Optional converting Markdown to HTML (set content_type to text/html too):

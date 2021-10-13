@@ -51,6 +51,7 @@ async function main() {
         const cc = core.getInput("cc", { required: false })
         const bcc = core.getInput("bcc", { required: false })
         const replyTo = core.getInput("reply_to", { required: false })
+        const inReplyTo = core.getInput("in_reply_to", { required: false })
         const attachments = core.getInput("attachments", { required: false })
         const convertMarkdown = core.getInput("convert_markdown", { required: false })
         const ignoreCert = core.getInput("ignore_cert", { required: false })
@@ -80,6 +81,8 @@ async function main() {
             cc: cc ? cc : undefined,
             bcc: bcc ? bcc : undefined,
             replyTo: replyTo ? replyTo : undefined,
+            inReplyTo: inReplyTo ? inReplyTo : undefined,
+            references: inReplyTo ? inReplyTo : undefined,
             text: body ? getBody(body, false) : undefined,
             html: htmlBody ? getBody(htmlBody, convertMarkdown) : undefined,
             priority: priority ? priority : undefined,
