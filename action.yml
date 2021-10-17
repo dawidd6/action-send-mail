@@ -44,6 +44,9 @@ inputs:
   reply_to:
     description: An email address that will appear on the Reply-To field
     required: false
+  in_reply_to:
+    description: The Message-ID this message is replying to
+    required: false
   ignore_cert:
     description: Allow unsigned/invalid certificates
     required: false
