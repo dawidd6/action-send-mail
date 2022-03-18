@@ -3,7 +3,7 @@
   "main": "main.js",
   "dependencies": {
     "@actions/core": "^1.2.7",
-    "@actions/glob": "^0.2.0",
+    "@actions/glob": "^0.2.1",
     "nodemailer": "^6.4.17",
     "showdown": "^1.9.1"
   }
