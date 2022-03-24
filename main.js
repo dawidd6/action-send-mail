@@ -3,6 +3,7 @@ const core = require("@actions/core")
 const glob = require("@actions/glob")
 const fs = require("fs")
 const showdown = require("showdown")
+const path = require("path")
 
 function getBody(bodyOrFile, convertMarkdown) {
     let body = bodyOrFile
@@ -33,7 +34,7 @@ function getFrom(from, username) {
 async function getAttachments(attachments) {
     const globber = await glob.create(attachments.split(',').join('\n'))
     const files = await globber.glob()
-    return files.map(f => ({ path: f, cid: f.replace(/^.*[\\\/]/, '')}))
+    return files.map(f => ({ filename: path.basename(f), path: f, cid: f.replace(/^.*[\\\/]/, '')}))
 }
 
 async function main() {
