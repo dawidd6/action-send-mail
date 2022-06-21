@@ -1,9 +1,5 @@
-'use strict';
-
-const pTry = (fn, ...arguments_) => new Promise(resolve => {
-	resolve(fn(...arguments_));
-});
-
-module.exports = pTry;
-// TODO: remove this in the next major version
-module.exports.default = pTry;
+export default async function pTry(function_, ...arguments_) {
+	return new Promise(resolve => {
+		resolve(function_(...arguments_));
+	});
+}

@@ -1,0 +1,21 @@
+{
+  "name": "byte-length",
+  "version": "0.1.0",
+  "homepage": "https://github.com/DylanPiercey/byte-length",
+  "authors": [
+    "pierceydylan@gmail.com <Dylan Piercey>"
+  ],
+  "main": "index.js",
+  "license": "MIT",
+  "keywords": [
+    "bytes",
+    "string",
+    "length",
+    "content-length"
+  ],
+  "ignore":[
+    "**/.*",
+    "node_modules",
+    "test"
+  ]
+}

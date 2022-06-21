@@ -320,25 +320,26 @@ class SESTransport extends EventEmitter {
             Source: 'invalid@invalid',
             Destinations: ['invalid@invalid']
         };
-        const cb = err => {
-            if (err && err.code !== 'InvalidParameterValue') {
-                return callback(err);
-            }
-            return callback(null, true);
-        };
 
         if (!callback) {
             promise = new Promise((resolve, reject) => {
                 callback = shared.callbackPromise(resolve, reject);
             });
         }
+        const cb = err => {
+            if (err && (err.code || err.Code) !== 'InvalidParameterValue') {
+                return callback(err);
+            }
+            return callback(null, true);
+        };
 
         if (typeof ses.send === 'function' && aws.SendRawEmailCommand) {
             // v3 API
+            sesMessage.RawMessage.Data = Buffer.from(sesMessage.RawMessage.Data);
             ses.send(new aws.SendRawEmailCommand(sesMessage), cb);
         } else {
             // v2 API
-            ses.sendRawEmail(sesMessage, cb).promise();
+            ses.sendRawEmail(sesMessage, cb);
         }
 
         return promise;

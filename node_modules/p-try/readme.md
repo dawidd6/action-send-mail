@@ -1,34 +1,29 @@
-# p-try [![Build Status](https://travis-ci.org/sindresorhus/p-try.svg?branch=master)](https://travis-ci.org/sindresorhus/p-try)
+# p-try
 
 > Start a promise chain
 
 [How is it useful?](http://cryto.net/~joepie91/blog/2016/05/11/what-is-promise-try-and-why-does-it-matter/)
 
-
 ## Install
 
+```sh
+npm install p-try
 ```
-$ npm install p-try
-```
-
 
 ## Usage
 
 ```js
-const pTry = require('p-try');
+import pTry from 'p-try';
 
-(async () => {
-	try {
-		const value = await pTry(() => {
-			return synchronousFunctionThatMightThrow();
-		});
-		console.log(value);
-	} catch (error) {
-		console.error(error);
-	}
-})();
+try {
+	const value = await pTry(() => {
+		return synchronousFunctionThatMightThrow();
+	});
+	console.log(value);
+} catch (error) {
+	console.error(error);
+}
 ```
-
 
 ## API
 
@@ -46,13 +41,18 @@ The function to run to start the promise chain.
 
 Arguments to pass to `fn`.
 
-
 ## Related
 
-- [p-finally](https://github.com/sindresorhus/p-finally) - `Promise#finally()` ponyfill - Invoked when the promise is settled regardless of outcome
 - [More…](https://github.com/sindresorhus/promise-fun)
 
+---
 
-## License
-
-MIT © [Sindre Sorhus](https://sindresorhus.com)
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-p-try?utm_source=npm-p-try&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>

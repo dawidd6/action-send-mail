@@ -1,0 +1,18 @@
+{
+  "name": "byte-length",
+  "version": "0.1.1",
+  "description": "Get the real byte length of a string.",
+  "author": "Dylan Piercey <pierceydylan@gmail.com>",
+  "main": "index.js",
+  "license": "MIT",
+  "keywords": [
+    "bytes",
+    "string",
+    "length",
+    "content-length"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DylanPiercey/byte-length"
+  }
+}
