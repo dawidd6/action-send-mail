@@ -4,6 +4,7 @@ const glob = require("@actions/glob")
 const fs = require("fs")
 const showdown = require("showdown")
 const path = require("path")
+const cheerio = require('cheerio');
 
 function getBody(bodyOrFile, convertMarkdown) {
     let body = bodyOrFile
@@ -12,6 +13,9 @@ function getBody(bodyOrFile, convertMarkdown) {
     if (bodyOrFile.startsWith("file://")) {
         const file = bodyOrFile.replace("file://", "")
         body = fs.readFileSync(file, "utf8")
+        const $ = cheerio.load(body);
+        $('head').remove();
+        body = $.html();
     }
 
     // Convert Markdown to HTML

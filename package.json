@@ -4,6 +4,7 @@
   "dependencies": {
     "@actions/core": "^1.2.7",
     "@actions/glob": "^0.2.1",
+    "cheerio": "^1.0.0-rc.11",
     "nodemailer": "^6.4.17",
     "showdown": "^1.9.1"
   }
