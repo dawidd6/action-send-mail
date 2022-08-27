@@ -58,3 +58,19 @@ jobs:
           attachments: ${{matrix.attachments}}
           convert_markdown: ${{matrix.convert_markdown}}
           priority: high
+
+  url-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Send mail
+        uses: ./
+        with:
+          connection_url: smtp+starttls://${{secrets.USERNAME}}:${{secrets.PASSWORD}}@${{secrets.ADDRESS}}/
+          subject: Plain body with connection_url
+          body: |
+            first line
+            second line
+          to: ${{github.event.pusher.email}}
+          from: github-actions
