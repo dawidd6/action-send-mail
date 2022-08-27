@@ -16,10 +16,20 @@ Some features:
 - name: Send mail
   uses: dawidd6/action-send-mail@v3
   with:
-    # Required mail server address:
+    # Specify connection via URL (replaces server_address, server_port, secure,
+    # username and password)
+    #
+    # Format:
+    #
+    #  * smtp://user:password@server:port
+    #  * smtp+starttls://user:password@server:port
+    connection_url: ${{secrets.MAIL_CONNECTION}}
+    # Required mail server address if not connection_url:
     server_address: smtp.gmail.com
-    # Required mail server port:
+    # Server port, default 25:
     server_port: 465
+    # Optional whether this connection use TLS (default is true if server_port is 465)
+    secure: true
     # Optional (recommended): mail server username:
     username: ${{secrets.MAIL_USERNAME}}
     # Optional (recommended) mail server password:
@@ -30,8 +40,6 @@ Some features:
     to: obiwan@example.com,yoda@example.com
     # Required sender full name (address can be skipped):
     from: Luke Skywalker # <user@example.com>
-    # Optional whether this connection use TLS (default is true if server_port is 465)
-    secure: true
     # Optional plain body:
     body: Build job of ${{github.repository}} completed successfully!
     # Optional HTML body read from file:
