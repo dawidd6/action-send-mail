@@ -39,48 +39,14 @@ async function getAttachments(attachments) {
 
 async function main() {
     try {
-        let serverAddress = core.getInput("server_address")
-        let serverPort = core.getInput("server_port")
-        let secure = core.getInput("secure")
-        let username = core.getInput("username")
-        let password = core.getInput("password")
-
-        if (!secure) {
-            secure = serverPort === "465"
-        }
-
-        const connectionUrl = core.getInput("connection_url")
-        if (connectionUrl) {
-            const url = new URL(connectionUrl)
-            switch (url.protocol) {
-                default:
-                    throw new Error(`Unsupported connection protocol '${url.protocol}'`);
-                case "smtp:":
-                    serverPort = "25";
-                    secure = "false"
-                    break;
-                case "smtp+starttls:":
-                    serverPort = "465";
-                    secure = "true"
-                    break;
-            }
-            if (url.hostname) {
-                serverAddress = url.hostname
-            }
-            if (url.port) {
-                serverPort = url.port
-            }
-            if (url.username) {
-                username = unescape(url.username)
-            }
-            if (url.password) {
-                password = unescape(url.password)
-            }
-        }
-
+        const serverAddress = core.getInput("server_address", { required: true })
+        const serverPort = core.getInput("server_port", { required: true })
+        const username = core.getInput("username")
+        const password = core.getInput("password")
         const subject = core.getInput("subject", { required: true })
         const from = core.getInput("from", { required: true })
         const to = core.getInput("to", { required: true })
+        const secure = core.getInput("secure", { required: false })
         const body = core.getInput("body", { required: false })
         const htmlBody = core.getInput("html_body", { required: false })
         const cc = core.getInput("cc", { required: false })
@@ -91,10 +57,6 @@ async function main() {
         const convertMarkdown = core.getInput("convert_markdown", { required: false })
         const ignoreCert = core.getInput("ignore_cert", { required: false })
         const priority = core.getInput("priority", { required: false })
-
-        if (!serverAddress) {
-            throw new Error("Server address must be specified");
-        }
 
         if (!username || !password) {
             core.warning("Username and password not specified. You should only do this if you are using a self-hosted runner to access an on-premise mail server.")
@@ -107,7 +69,7 @@ async function main() {
                 pass: password
             } : undefined,
             port: serverPort,
-            secure: secure == "true",
+            secure: secure == "true" ? true : serverPort == "465",
             tls: ignoreCert == "true" ? {
                 rejectUnauthorized: false
             } : undefined,
