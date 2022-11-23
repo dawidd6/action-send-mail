@@ -5,17 +5,17 @@ const fs = require("fs");
 const showdown = require("showdown");
 const path = require("path");
 
-function getBody(bodyOrFile, convertMarkdown) {
+function getBody(bodyOrFile, convertMarkdown, isHtml = false) {
   let body = bodyOrFile;
 
   // Read body from file
   if (bodyOrFile.startsWith("file://")) {
     const file = bodyOrFile.replace("file://", "");
-    body = createReadStream(file);
+    body = fs.createReadStream(file);
   }
 
   // Convert Markdown to HTML
-  if (convertMarkdown) {
+  if (convertMarkdown && !isHtml) {
     const converter = new showdown.Converter();
     body = converter.makeHtml(body);
   }
@@ -137,7 +137,7 @@ async function main() {
       inReplyTo: inReplyTo ? inReplyTo : undefined,
       references: inReplyTo ? inReplyTo : undefined,
       text: body ? getBody(body, false) : undefined,
-      html: htmlBody ? getBody(htmlBody, convertMarkdown) : undefined,
+      html: htmlBody ? getBody(htmlBody, false, true) : undefined,
       priority: priority ? priority : undefined,
       attachments: attachments ? await getAttachments(attachments) : undefined,
     });
