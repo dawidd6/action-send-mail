@@ -30,7 +30,7 @@ Some features:
     server_port: 465
     # Optional whether this connection use TLS (default is true if server_port is 465)
     secure: true
-    # Optional (recommended): mail server username:
+    # Optional (recommended) mail server username:
     username: ${{secrets.MAIL_USERNAME}}
     # Optional (recommended) mail server password:
     password: ${{secrets.MAIL_PASSWORD}}
