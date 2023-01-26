@@ -6,7 +6,7 @@ Some features:
 - plain text body
 - HTML body
 - multipart body (plain text + HTML)
-- Markdown to HTML converting
+- Markdown to HTML converting (use `html_body`, not `body`)
 - file attachments (supports globbing)
 
 
