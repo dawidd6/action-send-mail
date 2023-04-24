@@ -90,6 +90,7 @@ async function main() {
         const attachments = core.getInput("attachments", { required: false })
         const convertMarkdown = core.getInput("convert_markdown", { required: false })
         const ignoreCert = core.getInput("ignore_cert", { required: false })
+        const ciphersSSLv3 = core.getInput("ciphers_sslv3", { required: false })
         const priority = core.getInput("priority", { required: false })
 
         if (!serverAddress) {
@@ -100,7 +101,7 @@ async function main() {
             core.warning("Username and password not specified. You should only do this if you are using a self-hosted runner to access an on-premise mail server.")
         }
 
-        const transport = nodemailer.createTransport({
+        const transportOptions = {
             host: serverAddress,
             auth: username && password ? {
                 user: username,
@@ -111,7 +112,13 @@ async function main() {
             tls: ignoreCert == "true" ? {
                 rejectUnauthorized: false
             } : undefined,
-        })
+        }
+
+        if (ignoreCert == "true" && ciphersSSLv3 == "true") {
+            transportOptions.tls.ciphers = 'SSLv3'
+        }
+
+        const transport = nodemailer.createTransport(transportOptions)
 
         const info = await transport.sendMail({
             from: getFrom(from, username),
