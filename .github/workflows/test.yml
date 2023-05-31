@@ -15,7 +15,7 @@ jobs:
       max-parallel: 1
       matrix:
         include:
-          - subject: Plain body (attachment)
+          - subject: Plain body Test (attachment)
             attachments: action.yml
             body: |
               first line
