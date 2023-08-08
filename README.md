@@ -54,6 +54,8 @@ Some features:
     in_reply_to: <random-luke@example.com>
     # Optional unsigned/invalid certificates allowance:
     ignore_cert: true
+    # Optional Sets the secure SSL version v3
+    ciphers_sslv3: true
     # Optional converting Markdown to HTML (set content_type to text/html too):
     convert_markdown: true
     # Optional attachments:
