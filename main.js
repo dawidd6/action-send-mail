@@ -5,22 +5,22 @@ const fs = require("fs")
 const showdown = require("showdown")
 const path = require("path")
 
-function getBody(bodyOrFile, convertMarkdown) {
-    let body = bodyOrFile
+function getText(textOrFile, convertMarkdown) {
+    let text = textOrFile
 
-    // Read body from file
-    if (bodyOrFile.startsWith("file://")) {
-        const file = bodyOrFile.replace("file://", "")
-        body = fs.readFileSync(file, "utf8")
+    // Read text from file
+    if (textOrFile.startsWith("file://")) {
+        const file = textOrFile.replace("file://", "")
+        text = fs.readFileSync(file, "utf8")
     }
 
     // Convert Markdown to HTML
     if (convertMarkdown) {
         const converter = new showdown.Converter()
-        body = converter.makeHtml(body)
+        text = converter.makeHtml(text)
     }
 
-    return body
+    return text
 }
 
 function getFrom(from, username) {
@@ -116,14 +116,14 @@ async function main() {
         const info = await transport.sendMail({
             from: getFrom(from, username),
             to: to,
-            subject: subject,
+            subject: getText(subject, false),
             cc: cc ? cc : undefined,
             bcc: bcc ? bcc : undefined,
             replyTo: replyTo ? replyTo : undefined,
             inReplyTo: inReplyTo ? inReplyTo : undefined,
             references: inReplyTo ? inReplyTo : undefined,
-            text: body ? getBody(body, false) : undefined,
-            html: htmlBody ? getBody(htmlBody, convertMarkdown) : undefined,
+            text: body ? getText(body, false) : undefined,
+            html: htmlBody ? getText(htmlBody, convertMarkdown) : undefined,
             priority: priority ? priority : undefined,
             attachments: attachments ? (await getAttachments(attachments)) : undefined,
         })
