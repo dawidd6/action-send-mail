@@ -30,7 +30,7 @@ jobs:
               <p>Paragraph</p>
               </body>
               </html>
-          - subject: Plain body (Markdown)
+          - subject: file://testdata/subject.txt
             convert_markdown: true
             body: file://README.md
           - subject: HTML body (Markdown)
