@@ -96,10 +96,6 @@ async function main() {
             throw new Error("Server address must be specified")
         }
 
-        if (!username || !password) {
-            core.warning("Username and password not specified. You should only do this if you are using a self-hosted runner to access an on-premise mail server.")
-        }
-
         const transport = nodemailer.createTransport({
             host: serverAddress,
             auth: username && password ? {
