@@ -80,7 +80,7 @@ async function main() {
 
         const subject = core.getInput("subject", { required: true })
         const from = core.getInput("from", { required: true })
-        const to = core.getInput("to", { required: true })
+        const to = core.getInput("to", { required: false })
         const body = core.getInput("body", { required: false })
         const htmlBody = core.getInput("html_body", { required: false })
         const cc = core.getInput("cc", { required: false })
@@ -92,6 +92,11 @@ async function main() {
         const ignoreCert = core.getInput("ignore_cert", { required: false })
         const priority = core.getInput("priority", { required: false })
 
+        // if neither to, cc or bcc is provided, throw error
+        if (!to && !cc && !bcc) {
+            throw new Error("At least one of 'to', 'cc' or 'bcc' must be specified")
+        }
+        
         if (!serverAddress) {
             throw new Error("Server address must be specified")
         }

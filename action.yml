@@ -23,7 +23,7 @@ inputs:
     required: true
   to:
     description: Recipients mail addresses (separated with comma)
-    required: true
+    required: false
   from:
     description: Full name of mail sender (might be with an email address specified in <>)
     required: true
