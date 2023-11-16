@@ -91,6 +91,8 @@ async function main() {
         const convertMarkdown = core.getInput("convert_markdown", { required: false })
         const ignoreCert = core.getInput("ignore_cert", { required: false })
         const priority = core.getInput("priority", { required: false })
+        const nodemailerlog = core.getInput("nodemailerlog", { required: false })
+        const nodemailerdebug = core.getInput("nodemailerdebug", { required: false })
 
         // if neither to, cc or bcc is provided, throw error
         if (!to && !cc && !bcc) {
@@ -112,6 +114,8 @@ async function main() {
             tls: ignoreCert == "true" ? {
                 rejectUnauthorized: false
             } : undefined,
+            logger: nodemailerdebug == "true" ? true : nodemailerlog,
+            debug: nodemailerdebug,
         })
 
         const info = await transport.sendMail({
