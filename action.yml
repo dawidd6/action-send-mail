@@ -57,6 +57,12 @@ inputs:
   priority:
     description: Set Priority level for the mail message to 'high', 'normal' (default) or 'low'
     required: false
+  nodemailerlog:
+    description: Log option for nodemailer
+    required: false
+  nodemailerdebug:
+    description: Debug option for nodemailer
+    required: false
 runs:
   using: node16
   main: main.js

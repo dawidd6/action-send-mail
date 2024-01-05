@@ -60,6 +60,10 @@ Some features:
     attachments: attachments.zip,git.diff,./dist/static/*.js
     # Optional priority: 'high', 'normal' (default) or 'low'
     priority: low
+    # Optional nodemailerlog: true/false
+    nodemailerlog: false
+    # Optional nodemailerdebug: true/false if true lognodem will also be set true
+    nodemailerdebug: false
 ```
 
 ## Troubleshooting
