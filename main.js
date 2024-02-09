@@ -37,6 +37,12 @@ async function getAttachments(attachments) {
     return files.map(f => ({ filename: path.basename(f), path: f, cid: f.replace(/^.*[\\\/]/, '')}))
 }
 
+function sleep(ms) {
+    return new Promise((resolve) => {
+       setTimeout(resolve, ms);
+    });
+}
+
 async function main() {
     try {
         let serverAddress = core.getInput("server_address")
@@ -118,20 +124,43 @@ async function main() {
             debug: nodemailerdebug,
         })
 
-        const info = await transport.sendMail({
-            from: getFrom(from, username),
-            to: to,
-            subject: getText(subject, false),
-            cc: cc ? cc : undefined,
-            bcc: bcc ? bcc : undefined,
-            replyTo: replyTo ? replyTo : undefined,
-            inReplyTo: inReplyTo ? inReplyTo : undefined,
-            references: inReplyTo ? inReplyTo : undefined,
-            text: body ? getText(body, false) : undefined,
-            html: htmlBody ? getText(htmlBody, convertMarkdown) : undefined,
-            priority: priority ? priority : undefined,
-            attachments: attachments ? (await getAttachments(attachments)) : undefined,
-        })
+        var i = 1;
+        while (true) {
+            try {
+                const info = await transport.sendMail({
+                    from: getFrom(from, username),
+                    to: to,
+                    subject: getText(subject, false),
+                    cc: cc ? cc : undefined,
+                    bcc: bcc ? bcc : undefined,
+                    replyTo: replyTo ? replyTo : undefined,
+                    inReplyTo: inReplyTo ? inReplyTo : undefined,
+                    references: inReplyTo ? inReplyTo : undefined,
+                    text: body ? getText(body, false) : undefined,
+                    html: htmlBody ? getText(htmlBody, convertMarkdown) : undefined,
+                    priority: priority ? priority : undefined,
+                    attachments: attachments ? (await getAttachments(attachments)) : undefined,
+                });
+                break;
+            } catch (error) {
+                if (!error.message.includes("Try again later,")) {
+                    core.setFailed(error.message)
+                    break;
+                }
+                if (i > 10) {
+                    core.setFailed(error.message)
+                    break;
+                }
+                console.log("Received: " + error.message);
+                if (i < 2) {
+                    console.log("Trying again in a minute...");
+                } else {
+                    console.log("Trying again in " + i + " minutes...");
+                }
+                await sleep(i * 60000);
+                i++;
+            }
+        }
     } catch (error) {
         core.setFailed(error.message)
     }
