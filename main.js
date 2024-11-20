@@ -16,7 +16,7 @@ function getText(textOrFile, convertMarkdown) {
 
     // Convert Markdown to HTML
     if (convertMarkdown) {
-        const converter = new showdown.Converter()
+        const converter = new showdown.Converter({tables: true})
         text = converter.makeHtml(text)
     }
 
