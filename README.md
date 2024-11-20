@@ -14,7 +14,7 @@ Some features:
 
 ```yaml
 - name: Send mail
-  uses: dawidd6/action-send-mail@v3
+  uses: dawidd6/action-send-mail@v4
   with:
     # Specify connection via URL (replaces server_address, server_port, secure,
     # username and password)
