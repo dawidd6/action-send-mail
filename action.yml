@@ -63,6 +63,12 @@ inputs:
   nodemailerdebug:
     description: Debug option for nodemailer
     required: false
+  envelope_from:
+    description: Custom envelope sender address for SMTP MAIL FROM command
+    required: false
+  envelope_to:
+    description: Custom envelope recipient addresses for SMTP RCPT TO command (separated with comma)
+    required: false
 runs:
   using: node20
   main: main.js

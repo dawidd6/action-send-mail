@@ -99,6 +99,8 @@ async function main() {
         const priority = core.getInput("priority", { required: false })
         const nodemailerlog = core.getInput("nodemailerlog", { required: false })
         const nodemailerdebug = core.getInput("nodemailerdebug", { required: false })
+        const envelopeFrom = core.getInput("envelope_from", { required: false })
+        const envelopeTo = core.getInput("envelope_to", { required: false })
 
         // if neither to, cc or bcc is provided, throw error
         if (!to && !cc && !bcc) {
@@ -140,6 +142,10 @@ async function main() {
                     html: htmlBody ? getText(htmlBody, convertMarkdown) : undefined,
                     priority: priority ? priority : undefined,
                     attachments: attachments ? (await getAttachments(attachments)) : undefined,
+                    envelope: (envelopeFrom || envelopeTo) ? {
+                        from: envelopeFrom ? envelopeFrom : undefined,
+                        to: envelopeTo ? envelopeTo : undefined
+                    } : undefined
                 });
                 break;
             } catch (error) {
