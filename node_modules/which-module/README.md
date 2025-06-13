@@ -5,6 +5,7 @@
 [![Build Status](https://travis-ci.org/nexdrew/which-module.svg?branch=master)](https://travis-ci.org/nexdrew/which-module)
 [![Coverage Status](https://coveralls.io/repos/github/nexdrew/which-module/badge.svg?branch=master)](https://coveralls.io/github/nexdrew/which-module?branch=master)
 [![Standard Version](https://img.shields.io/badge/release-standard%20version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version)
+[![Greenkeeper badge](https://badges.greenkeeper.io/nexdrew/which-module.svg)](https://greenkeeper.io/)
 
 Find the `module` object in `require.cache` for something that was `require()`d
 or `import`ed - essentially a reverse `require()` lookup.
@@ -53,3 +54,5 @@ then this method returns `null`.
 ## License
 
 ISC © Contributors
+
+[opensourceregistry_package_id]: # (458260416784685e5ef3091fee54001785dd4360406aa3000315ff256eef6878)
