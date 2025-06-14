@@ -146,6 +146,7 @@ async function main() {
                     : undefined,
             logger: nodemailerdebug == "true" ? true : nodemailerlog,
             debug: nodemailerdebug,
+            proxy: process.env.HTTP_PROXY,
         });
 
         var i = 1;

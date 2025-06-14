@@ -3,18 +3,21 @@
 An action that simply sends a mail to multiple recipients.
 
 Some features:
+
 - plain text body
 - HTML body
 - multipart body (plain text + HTML)
 - Markdown to HTML converting (use `html_body`, not `body`)
 - file attachments (supports globbing)
 
-
 ## Usage
 
 ```yaml
 - name: Send mail
   uses: dawidd6/action-send-mail@v5
+  env:
+    # Optional http proxy:
+    HTTP_PROXY: http://proxy.example.test:3128
   with:
     # Specify connection via URL (replaces server_address, server_port, secure,
     # username and password)
@@ -76,8 +79,7 @@ Some features:
 
 Instead of using your normal Google password, use an App password.
 
-1. [Enable 2-Step Verification.](https://support.google.com/accounts/answer/185839?hl=en&co=GENIE.Platform%3DAndroid).
-This is needed to create an App password.
+1. [Enable 2-Step Verification](https://support.google.com/accounts/answer/185839?hl=en&co=GENIE.Platform%3DAndroid). This is needed to create an App password.
 2. [Create an App password](https://support.google.com/accounts/answer/185833?hl=en) for `Mail`.
 
 ### Unauthenticated login (username/password fields)
