@@ -1,130 +1,152 @@
-const nodemailer = require("nodemailer")
-const core = require("@actions/core")
-const glob = require("@actions/glob")
-const fs = require("fs")
-const showdown = require("showdown")
-const path = require("path")
+const nodemailer = require("nodemailer");
+const core = require("@actions/core");
+const glob = require("@actions/glob");
+const fs = require("fs");
+const showdown = require("showdown");
+const path = require("path");
 
 function getText(textOrFile, convertMarkdown) {
-    let text = textOrFile
+    let text = textOrFile;
 
     // Read text from file
     if (textOrFile.startsWith("file://")) {
-        const file = textOrFile.replace("file://", "")
-        text = fs.readFileSync(file, "utf8")
+        const file = textOrFile.replace("file://", "");
+        text = fs.readFileSync(file, "utf8");
     }
 
     // Convert Markdown to HTML
     if (convertMarkdown) {
-        const converter = new showdown.Converter({tables: true})
-        text = converter.makeHtml(text)
+        const converter = new showdown.Converter({ tables: true });
+        text = converter.makeHtml(text);
     }
 
-    return text
+    return text;
 }
 
 function getFrom(from, username) {
     if (from.match(/.+ <.+@.+>/)) {
-        return from
+        return from;
     }
 
-    return `"${from}" <${username}>`
+    return `"${from}" <${username}>`;
 }
 
 async function getAttachments(attachments) {
-    const globber = await glob.create(attachments.split(',').join('\n'))
-    const files = await globber.glob()
-    return files.map(f => ({ filename: path.basename(f), path: f, cid: f.replace(/^.*[\\\/]/, '')}))
+    const globber = await glob.create(attachments.split(",").join("\n"));
+    const files = await globber.glob();
+    return files.map((f) => ({
+        filename: path.basename(f),
+        path: f,
+        cid: f.replace(/^.*[\\\/]/, ""),
+    }));
 }
 
 function sleep(ms) {
     return new Promise((resolve) => {
-       setTimeout(resolve, ms);
+        setTimeout(resolve, ms);
     });
 }
 
 async function main() {
     try {
-        let serverAddress = core.getInput("server_address")
-        let serverPort = core.getInput("server_port")
-        let secure = core.getInput("secure")
-        let username = core.getInput("username")
-        let password = core.getInput("password")
+        let serverAddress = core.getInput("server_address");
+        let serverPort = core.getInput("server_port");
+        let secure = core.getInput("secure");
+        let username = core.getInput("username");
+        let password = core.getInput("password");
 
         if (!secure) {
-            secure = serverPort === "465" ? "true" : "false"
+            secure = serverPort === "465" ? "true" : "false";
         }
 
-        const connectionUrl = core.getInput("connection_url")
+        const connectionUrl = core.getInput("connection_url");
         if (connectionUrl) {
-            const url = new URL(connectionUrl)
+            const url = new URL(connectionUrl);
             switch (url.protocol) {
                 default:
-                    throw new Error(`Unsupported connection protocol '${url.protocol}'`)
+                    throw new Error(
+                        `Unsupported connection protocol '${url.protocol}'`
+                    );
                 case "smtp:":
-                    serverPort = "25"
-                    secure = "false"
-                    break
+                    serverPort = "25";
+                    secure = "false";
+                    break;
                 case "smtp+starttls:":
-                    serverPort = "465"
-                    secure = "true"
-                    break
+                    serverPort = "465";
+                    secure = "true";
+                    break;
             }
             if (url.hostname) {
-                serverAddress = url.hostname
+                serverAddress = url.hostname;
             }
             if (url.port) {
-                serverPort = url.port
+                serverPort = url.port;
             }
             if (url.username) {
-                username = unescape(url.username)
+                username = unescape(url.username);
             }
             if (url.password) {
-                password = unescape(url.password)
+                password = unescape(url.password);
             }
         }
 
-        const subject = core.getInput("subject", { required: true })
-        const from = core.getInput("from", { required: true })
-        const to = core.getInput("to", { required: false })
-        const body = core.getInput("body", { required: false })
-        const htmlBody = core.getInput("html_body", { required: false })
-        const cc = core.getInput("cc", { required: false })
-        const bcc = core.getInput("bcc", { required: false })
-        const replyTo = core.getInput("reply_to", { required: false })
-        const inReplyTo = core.getInput("in_reply_to", { required: false })
-        const attachments = core.getInput("attachments", { required: false })
-        const convertMarkdown = core.getInput("convert_markdown", { required: false })
-        const ignoreCert = core.getInput("ignore_cert", { required: false })
-        const priority = core.getInput("priority", { required: false })
-        const nodemailerlog = core.getInput("nodemailerlog", { required: false })
-        const nodemailerdebug = core.getInput("nodemailerdebug", { required: false })
-        const envelopeFrom = core.getInput("envelope_from", { required: false })
-        const envelopeTo = core.getInput("envelope_to", { required: false })
+        const subject = core.getInput("subject", { required: true });
+        const from = core.getInput("from", { required: true });
+        const to = core.getInput("to", { required: false });
+        const body = core.getInput("body", { required: false });
+        const htmlBody = core.getInput("html_body", { required: false });
+        const cc = core.getInput("cc", { required: false });
+        const bcc = core.getInput("bcc", { required: false });
+        const replyTo = core.getInput("reply_to", { required: false });
+        const inReplyTo = core.getInput("in_reply_to", { required: false });
+        const attachments = core.getInput("attachments", { required: false });
+        const convertMarkdown = core.getInput("convert_markdown", {
+            required: false,
+        });
+        const ignoreCert = core.getInput("ignore_cert", { required: false });
+        const priority = core.getInput("priority", { required: false });
+        const nodemailerlog = core.getInput("nodemailerlog", {
+            required: false,
+        });
+        const nodemailerdebug = core.getInput("nodemailerdebug", {
+            required: false,
+        });
+        const envelopeFrom = core.getInput("envelope_from", {
+            required: false,
+        });
+        const envelopeTo = core.getInput("envelope_to", { required: false });
 
         // if neither to, cc or bcc is provided, throw error
         if (!to && !cc && !bcc) {
-            throw new Error("At least one of 'to', 'cc' or 'bcc' must be specified")
+            throw new Error(
+                "At least one of 'to', 'cc' or 'bcc' must be specified"
+            );
         }
-        
+
         if (!serverAddress) {
-            throw new Error("Server address must be specified")
+            throw new Error("Server address must be specified");
         }
 
         const transport = nodemailer.createTransport({
             host: serverAddress,
-            auth: username && password ? {
-                user: username,
-                pass: password
-            } : undefined,
+            auth:
+                username && password
+                    ? {
+                          user: username,
+                          pass: password,
+                      }
+                    : undefined,
             port: serverPort,
             secure: secure === "true",
-            tls: ignoreCert == "true" ? {
-                rejectUnauthorized: false
-            } : undefined,
+            tls:
+                ignoreCert == "true"
+                    ? {
+                          rejectUnauthorized: false,
+                      }
+                    : undefined,
             logger: nodemailerdebug == "true" ? true : nodemailerlog,
             debug: nodemailerdebug,
-        })
+        });
 
         var i = 1;
         while (true) {
@@ -139,22 +161,29 @@ async function main() {
                     inReplyTo: inReplyTo ? inReplyTo : undefined,
                     references: inReplyTo ? inReplyTo : undefined,
                     text: body ? getText(body, false) : undefined,
-                    html: htmlBody ? getText(htmlBody, convertMarkdown) : undefined,
+                    html: htmlBody
+                        ? getText(htmlBody, convertMarkdown)
+                        : undefined,
                     priority: priority ? priority : undefined,
-                    attachments: attachments ? (await getAttachments(attachments)) : undefined,
-                    envelope: (envelopeFrom || envelopeTo) ? {
-                        from: envelopeFrom ? envelopeFrom : undefined,
-                        to: envelopeTo ? envelopeTo : undefined
-                    } : undefined
+                    attachments: attachments
+                        ? await getAttachments(attachments)
+                        : undefined,
+                    envelope:
+                        envelopeFrom || envelopeTo
+                            ? {
+                                  from: envelopeFrom ? envelopeFrom : undefined,
+                                  to: envelopeTo ? envelopeTo : undefined,
+                              }
+                            : undefined,
                 });
                 break;
             } catch (error) {
                 if (!error.message.includes("Try again later,")) {
-                    core.setFailed(error.message)
+                    core.setFailed(error.message);
                     break;
                 }
                 if (i > 10) {
-                    core.setFailed(error.message)
+                    core.setFailed(error.message);
                     break;
                 }
                 console.log("Received: " + error.message);
@@ -168,8 +197,8 @@ async function main() {
             }
         }
     } catch (error) {
-        core.setFailed(error.message)
+        core.setFailed(error.message);
     }
 }
 
-main()
+main();
