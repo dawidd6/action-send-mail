@@ -51,4 +51,4 @@ jobs:
       - name: Get mail
         run: |
           curl -s "http://localhost:8025/api/v1/message/latest/raw"
-          curl -s "http://localhost:8025/api/v1/message/latest" | jq
+          curl -s "http://localhost:8025/api/v1/message/latest" | jq --color-output
