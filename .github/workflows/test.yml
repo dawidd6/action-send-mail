@@ -11,66 +11,44 @@ on:
 jobs:
   main:
     runs-on: ubuntu-latest
+    services:
+      mailpit:
+        image: docker.io/axllent/mailpit:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
     strategy:
       max-parallel: 1
-      matrix:
-        include:
-          - subject: Plain body (attachment)
-            attachments: action.yml
-            body: |
-              first line
-              second line
-          - subject: HTML body (attachments)
-            attachments: package.json,package-lock.json
-            html_body: |
-              <!DOCTYPE html>
-              <html>
-              <body>
-              <h1>Heading</h1>
-              <p>Paragraph</p>
-              </body>
-              </html>
-          - subject: file://testdata/subject.txt
-            convert_markdown: true
-            body: file://README.md
-          - subject: HTML body (Markdown)
-            convert_markdown: true
-            html_body: file://README.md
-          - subject: Multipart body (Markdown)
-            convert_markdown: true
-            body: file://README.md
-            html_body: file://README.md
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Send mail
         uses: ./
         with:
-          server_address: ${{secrets.ADDRESS}}
-          server_port: 465
-          username: ${{secrets.USERNAME}}
-          password: ${{secrets.PASSWORD}}
-          subject: ${{matrix.subject}}
-          body: ${{matrix.body}}
-          html_body: ${{matrix.html_body}}
-          to: ${{github.event.pusher.email}}
-          from: github-actions
-          attachments: ${{matrix.attachments}}
-          convert_markdown: ${{matrix.convert_markdown}}
+          connection_url: smtp://localhost:1025
+          server_address: localhost
+          server_port: 1025
+          secure: false
+          username: test
+          password: test
+          subject: Test Email
+          to: obiwan@example.com,yoda@example.com
+          from: Luke Skywalker <luke@example.com>
+          body: |-
+            This is a test email sent from a GitHub Action.
+            Please check the attachments and other fields.
+          html_body: file://README.md
+          cc: leia@example.com
+          bcc: owen@example.com
+          reply_to: vader@example.com
+          in_reply_to: palpatine@example.com
+          ignore_cert: false
+          convert_markdown: true
+          attachments: package.json,action.yml
           priority: high
 
-  url-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Send mail
-        uses: ./
-        with:
-          connection_url: smtp+starttls://${{secrets.USERNAME}}:${{secrets.PASSWORD}}@${{secrets.ADDRESS}}/
-          subject: Plain body with connection_url
-          body: |
-            first line
-            second line
-          to: ${{github.event.pusher.email}}
-          from: github-actions
+      - name: Get mail
+        run: |
+          curl -s "http://localhost:8025/api/v1/message/latest/raw"
+          curl -s "http://localhost:8025/api/v1/message/latest" | jq
