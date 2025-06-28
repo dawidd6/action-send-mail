@@ -1,4 +1,0 @@
-FROM docker.io/library/ubuntu:latest
-
-RUN apt-get update
-RUN apt-get install -y shellcheck shfmt jq npm git
