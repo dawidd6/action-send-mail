@@ -23,7 +23,8 @@ class PoolResource extends EventEmitter {
             switch ((this.options.auth.type || '').toString().toUpperCase()) {
                 case 'OAUTH2': {
                     let oauth2 = new XOAuth2(this.options.auth, this.logger);
-                    oauth2.provisionCallback = (this.pool.mailer && this.pool.mailer.get('oauth2_provision_cb')) || oauth2.provisionCallback;
+                    oauth2.provisionCallback =
+                        (this.pool.mailer && this.pool.mailer.get('oauth2_provision_cb')) || oauth2.provisionCallback;
                     this.auth = {
                         type: 'OAUTH2',
                         user: this.options.auth.user,
@@ -127,7 +128,7 @@ class PoolResource extends EventEmitter {
 
                 try {
                     timer.unref();
-                } catch (E) {
+                } catch (_E) {
                     // Ignore. Happens on envs with non-node timer implementation
                 }
             });
@@ -199,6 +200,11 @@ class PoolResource extends EventEmitter {
 
         if (mail.data.dsn) {
             envelope.dsn = mail.data.dsn;
+        }
+
+        // RFC 8689: Pass requireTLSExtensionEnabled to envelope for MAIL FROM parameter
+        if (mail.data.requireTLSExtensionEnabled) {
+            envelope.requireTLSExtensionEnabled = mail.data.requireTLSExtensionEnabled;
         }
 
         this.connection.send(envelope, mail.message.createReadStream(), (err, info) => {

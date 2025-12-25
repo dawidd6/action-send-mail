@@ -197,7 +197,7 @@ class SMTPTransport extends EventEmitter {
 
                 try {
                     timer.unref();
-                } catch (E) {
+                } catch (_E) {
                     // Ignore. Happens on envs with non-node timer implementation
                 }
             });
@@ -213,6 +213,11 @@ class SMTPTransport extends EventEmitter {
 
                 if (mail.data.dsn) {
                     envelope.dsn = mail.data.dsn;
+                }
+
+                // RFC 8689: Pass requireTLSExtensionEnabled to envelope for MAIL FROM parameter
+                if (mail.data.requireTLSExtensionEnabled) {
+                    envelope.requireTLSExtensionEnabled = mail.data.requireTLSExtensionEnabled;
                 }
 
                 this.logger.info(

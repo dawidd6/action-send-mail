@@ -4,9 +4,10 @@
  * Converts tokens for a single address into an address object
  *
  * @param {Array} tokens Tokens object
+ * @param {Number} depth Current recursion depth for nested group protection
  * @return {Object} Address object
  */
-function _handleAddress(tokens) {
+function _handleAddress(tokens, depth) {
     let isGroup = false;
     let state = 'text';
     let address;
@@ -15,10 +16,12 @@ function _handleAddress(tokens) {
         address: [],
         comment: [],
         group: [],
-        text: []
+        text: [],
+        textWasQuoted: [] // Track which text tokens came from inside quotes
     };
     let i;
     let len;
+    let insideQuotes = false; // Track if we're currently inside a quoted string
 
     // Filter out <addresses>, (comments) and regular text
     for (i = 0, len = tokens.length; i < len; i++) {
@@ -28,16 +31,25 @@ function _handleAddress(tokens) {
             switch (token.value) {
                 case '<':
                     state = 'address';
+                    insideQuotes = false;
                     break;
                 case '(':
                     state = 'comment';
+                    insideQuotes = false;
                     break;
                 case ':':
                     state = 'group';
                     isGroup = true;
+                    insideQuotes = false;
+                    break;
+                case '"':
+                    // Track quote state for text tokens
+                    insideQuotes = !insideQuotes;
+                    state = 'text';
                     break;
                 default:
                     state = 'text';
+                    insideQuotes = false;
                     break;
             }
         } else if (token.value) {
@@ -51,8 +63,14 @@ function _handleAddress(tokens) {
             if (prevToken && prevToken.noBreak && data[state].length) {
                 // join values
                 data[state][data[state].length - 1] += token.value;
+                if (state === 'text' && insideQuotes) {
+                    data.textWasQuoted[data.textWasQuoted.length - 1] = true;
+                }
             } else {
                 data[state].push(token.value);
+                if (state === 'text') {
+                    data.textWasQuoted.push(insideQuotes);
+                }
             }
         }
     }
@@ -66,16 +84,36 @@ function _handleAddress(tokens) {
     if (isGroup) {
         // http://tools.ietf.org/html/rfc2822#appendix-A.1.3
         data.text = data.text.join(' ');
+
+        // Parse group members, but flatten any nested groups (RFC 5322 doesn't allow nesting)
+        let groupMembers = [];
+        if (data.group.length) {
+            let parsedGroup = addressparser(data.group.join(','), { _depth: depth + 1 });
+            // Flatten: if any member is itself a group, extract its members into the sequence
+            parsedGroup.forEach(member => {
+                if (member.group) {
+                    // Nested group detected - flatten it by adding its members directly
+                    groupMembers = groupMembers.concat(member.group);
+                } else {
+                    groupMembers.push(member);
+                }
+            });
+        }
+
         addresses.push({
             name: data.text || (address && address.name),
-            group: data.group.length ? addressparser(data.group.join(',')) : []
+            group: groupMembers
         });
     } else {
         // If no address was found, try to detect one from regular text
         if (!data.address.length && data.text.length) {
             for (i = data.text.length - 1; i >= 0; i--) {
-                if (data.text[i].match(/^[^@\s]+@[^@\s]+$/)) {
+                // Security fix: Do not extract email addresses from quoted strings
+                // RFC 5321 allows @ inside quoted local-parts like "user@domain"@example.com
+                // Extracting emails from quoted text leads to misrouting vulnerabilities
+                if (!data.textWasQuoted[i] && data.text[i].match(/^[^@\s]+@[^@\s]+$/)) {
                     data.address = data.text.splice(i, 1);
+                    data.textWasQuoted.splice(i, 1);
                     break;
                 }
             }
@@ -92,10 +130,13 @@ function _handleAddress(tokens) {
             // still no address
             if (!data.address.length) {
                 for (i = data.text.length - 1; i >= 0; i--) {
-                    // fixed the regex to parse email address correctly when email address has more than one @
-                    data.text[i] = data.text[i].replace(/\s*\b[^@\s]+@[^\s]+\b\s*/, _regexHandler).trim();
-                    if (data.address.length) {
-                        break;
+                    // Security fix: Do not extract email addresses from quoted strings
+                    if (!data.textWasQuoted[i]) {
+                        // fixed the regex to parse email address correctly when email address has more than one @
+                        data.text[i] = data.text[i].replace(/\s*\b[^@\s]+@[^\s]+\b\s*/, _regexHandler).trim();
+                        if (data.address.length) {
+                            break;
+                        }
                     }
                 }
             }
@@ -260,6 +301,13 @@ class Tokenizer {
 }
 
 /**
+ * Maximum recursion depth for parsing nested groups.
+ * RFC 5322 doesn't allow nested groups, so this is a safeguard against
+ * malicious input that could cause stack overflow.
+ */
+const MAX_NESTED_GROUP_DEPTH = 50;
+
+/**
  * Parses structured e-mail addresses from an address field
  *
  * Example:
@@ -271,10 +319,18 @@ class Tokenizer {
  *     [{name: 'Name', address: 'address@domain'}]
  *
  * @param {String} str Address field
+ * @param {Object} options Optional options object
+ * @param {Number} options._depth Internal recursion depth counter (do not set manually)
  * @return {Array} An array of address objects
  */
 function addressparser(str, options) {
     options = options || {};
+    let depth = options._depth || 0;
+
+    // Prevent stack overflow from deeply nested groups (DoS protection)
+    if (depth > MAX_NESTED_GROUP_DEPTH) {
+        return [];
+    }
 
     let tokenizer = new Tokenizer(str);
     let tokens = tokenizer.tokenize();
@@ -299,7 +355,7 @@ function addressparser(str, options) {
     }
 
     addresses.forEach(address => {
-        address = _handleAddress(address);
+        address = _handleAddress(address, depth);
         if (address.length) {
             parsedAddresses = parsedAddresses.concat(address);
         }
