@@ -124,7 +124,7 @@ class SMTPConnection extends EventEmitter {
 
         /**
          * The socket connecting to the server
-         * @publick
+         * @public
          */
         this._socket = false;
 
@@ -415,7 +415,7 @@ class SMTPConnection extends EventEmitter {
         if (socket && !socket.destroyed) {
             try {
                 socket[closeMethod]();
-            } catch (E) {
+            } catch (_E) {
                 // just ignore
             }
         }
@@ -1116,6 +1116,23 @@ class SMTPConnection extends EventEmitter {
             }
         }
 
+        // RFC 8689: If the envelope requests REQUIRETLS extension
+        // then append REQUIRETLS keyword to the MAIL FROM command
+        // Note: REQUIRETLS can only be used over TLS connections and requires server support
+        if (this._envelope.requireTLSExtensionEnabled) {
+            if (!this.secure) {
+                return callback(
+                    this._formatError('REQUIRETLS can only be used over TLS connections (RFC 8689)', 'EREQUIRETLS', false, 'MAIL FROM')
+                );
+            }
+            if (!this._supportedExtensions.includes('REQUIRETLS')) {
+                return callback(
+                    this._formatError('Server does not support REQUIRETLS extension (RFC 8689)', 'EREQUIRETLS', false, 'MAIL FROM')
+                );
+            }
+            args.push('REQUIRETLS');
+        }
+
         this._sendCommand('MAIL FROM:<' + this._envelope.from + '>' + (args.length ? ' ' + args.join(' ') : ''));
     }
 
@@ -1147,8 +1164,8 @@ class SMTPConnection extends EventEmitter {
             }
             notify = notify.map(n => n.trim().toUpperCase());
             let validNotify = ['NEVER', 'SUCCESS', 'FAILURE', 'DELAY'];
-            let invaliNotify = notify.filter(n => !validNotify.includes(n));
-            if (invaliNotify.length || (notify.length > 1 && notify.includes('NEVER'))) {
+            let invalidNotify = notify.filter(n => !validNotify.includes(n));
+            if (invalidNotify.length || (notify.length > 1 && notify.includes('NEVER'))) {
                 throw new Error('notify: ' + JSON.stringify(notify.join(',')));
             }
             notify = notify.join(',');
@@ -1294,7 +1311,12 @@ class SMTPConnection extends EventEmitter {
 
         if (str.charAt(0) !== '2') {
             if (this.options.requireTLS) {
-                this._onError(new Error('EHLO failed but HELO does not support required STARTTLS. response=' + str), 'ECONNECTION', str, 'EHLO');
+                this._onError(
+                    new Error('EHLO failed but HELO does not support required STARTTLS. response=' + str),
+                    'ECONNECTION',
+                    str,
+                    'EHLO'
+                );
                 return;
             }
 
@@ -1330,6 +1352,11 @@ class SMTPConnection extends EventEmitter {
         // Detect if the server supports 8BITMIME
         if (/[ -]8BITMIME\b/im.test(str)) {
             this._supportedExtensions.push('8BITMIME');
+        }
+
+        // Detect if the server supports REQUIRETLS (RFC 8689)
+        if (/[ -]REQUIRETLS\b/im.test(str)) {
+            this._supportedExtensions.push('REQUIRETLS');
         }
 
         // Detect if the server supports PIPELINING
@@ -1476,7 +1503,9 @@ class SMTPConnection extends EventEmitter {
         let challengeString = '';
 
         if (!challengeMatch) {
-            return callback(this._formatError('Invalid login sequence while waiting for server challenge string', 'EAUTH', str, 'AUTH CRAM-MD5'));
+            return callback(
+                this._formatError('Invalid login sequence while waiting for server challenge string', 'EAUTH', str, 'AUTH CRAM-MD5')
+            );
         } else {
             challengeString = challengeMatch[1];
         }
@@ -1619,7 +1648,7 @@ class SMTPConnection extends EventEmitter {
         }
 
         if (!this._envelope.rcptQueue.length) {
-            return callback(this._formatError('Can\x27t send mail - no recipients defined', 'EENVELOPE', false, 'API'));
+            return callback(this._formatError("Can't send mail - no recipients defined", 'EENVELOPE', false, 'API'));
         } else {
             this._recipientQueue = [];
 
@@ -1675,7 +1704,7 @@ class SMTPConnection extends EventEmitter {
                 });
                 this._sendCommand('DATA');
             } else {
-                err = this._formatError('Can\x27t send mail - all recipients were rejected', 'EENVELOPE', str, 'RCPT TO');
+                err = this._formatError("Can't send mail - all recipients were rejected", 'EENVELOPE', str, 'RCPT TO');
                 err.rejected = this._envelope.rejected;
                 err.rejectedErrors = this._envelope.rejectedErrors;
                 return callback(err);
@@ -1814,7 +1843,7 @@ class SMTPConnection extends EventEmitter {
         let defaultHostname;
         try {
             defaultHostname = os.hostname() || '';
-        } catch (err) {
+        } catch (_err) {
             // fails on windows 7
             defaultHostname = 'localhost';
         }

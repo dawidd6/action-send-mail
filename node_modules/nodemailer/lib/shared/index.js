@@ -11,11 +11,19 @@ const net = require('net');
 const os = require('os');
 
 const DNS_TTL = 5 * 60 * 1000;
+const CACHE_CLEANUP_INTERVAL = 30 * 1000; // Minimum 30 seconds between cleanups
+const MAX_CACHE_SIZE = 1000; // Maximum number of entries in cache
+
+let lastCacheCleanup = 0;
+module.exports._lastCacheCleanup = () => lastCacheCleanup;
+module.exports._resetCacheCleanup = () => {
+    lastCacheCleanup = 0;
+};
 
 let networkInterfaces;
 try {
     networkInterfaces = os.networkInterfaces();
-} catch (err) {
+} catch (_err) {
     // fails on some systems
 }
 
@@ -81,8 +89,8 @@ const formatDNSValue = (value, extra) => {
                 !value.addresses || !value.addresses.length
                     ? null
                     : value.addresses.length === 1
-                    ? value.addresses[0]
-                    : value.addresses[Math.floor(Math.random() * value.addresses.length)]
+                      ? value.addresses[0]
+                      : value.addresses[Math.floor(Math.random() * value.addresses.length)]
         },
         extra || {}
     );
@@ -113,7 +121,27 @@ module.exports.resolveHostname = (options, callback) => {
     if (dnsCache.has(options.host)) {
         cached = dnsCache.get(options.host);
 
-        if (!cached.expires || cached.expires >= Date.now()) {
+        // Lazy cleanup with time throttling
+        const now = Date.now();
+        if (now - lastCacheCleanup > CACHE_CLEANUP_INTERVAL) {
+            lastCacheCleanup = now;
+
+            // Clean up expired entries
+            for (const [host, entry] of dnsCache.entries()) {
+                if (entry.expires && entry.expires < now) {
+                    dnsCache.delete(host);
+                }
+            }
+
+            // If cache is still too large, remove oldest entries
+            if (dnsCache.size > MAX_CACHE_SIZE) {
+                const toDelete = Math.floor(MAX_CACHE_SIZE * 0.1); // Remove 10% of entries
+                const keys = Array.from(dnsCache.keys()).slice(0, toDelete);
+                keys.forEach(key => dnsCache.delete(key));
+            }
+        }
+
+        if (!cached.expires || cached.expires >= now) {
             return callback(
                 null,
                 formatDNSValue(cached.value, {
@@ -126,7 +154,11 @@ module.exports.resolveHostname = (options, callback) => {
     resolver(4, options.host, options, (err, addresses) => {
         if (err) {
             if (cached) {
-                // ignore error, use expired value
+                dnsCache.set(options.host, {
+                    value: cached.value,
+                    expires: Date.now() + (options.dnsTtl || DNS_TTL)
+                });
+
                 return callback(
                     null,
                     formatDNSValue(cached.value, {
@@ -160,7 +192,11 @@ module.exports.resolveHostname = (options, callback) => {
         resolver(6, options.host, options, (err, addresses) => {
             if (err) {
                 if (cached) {
-                    // ignore error, use expired value
+                    dnsCache.set(options.host, {
+                        value: cached.value,
+                        expires: Date.now() + (options.dnsTtl || DNS_TTL)
+                    });
+
                     return callback(
                         null,
                         formatDNSValue(cached.value, {
@@ -195,7 +231,11 @@ module.exports.resolveHostname = (options, callback) => {
                 dns.lookup(options.host, { all: true }, (err, addresses) => {
                     if (err) {
                         if (cached) {
-                            // ignore error, use expired value
+                            dnsCache.set(options.host, {
+                                value: cached.value,
+                                expires: Date.now() + (options.dnsTtl || DNS_TTL)
+                            });
+
                             return callback(
                                 null,
                                 formatDNSValue(cached.value, {
@@ -246,9 +286,13 @@ module.exports.resolveHostname = (options, callback) => {
                         })
                     );
                 });
-            } catch (err) {
+            } catch (_err) {
                 if (cached) {
-                    // ignore error, use expired value
+                    dnsCache.set(options.host, {
+                        value: cached.value,
+                        expires: Date.now() + (options.dnsTtl || DNS_TTL)
+                    });
+
                     return callback(
                         null,
                         formatDNSValue(cached.value, {
@@ -419,52 +463,74 @@ module.exports.callbackPromise = (resolve, reject) =>
     };
 
 module.exports.parseDataURI = uri => {
-    let input = uri;
-    let commaPos = input.indexOf(',');
-    if (!commaPos) {
-        return uri;
+    if (typeof uri !== 'string') {
+        return null;
     }
 
-    let data = input.substring(commaPos + 1);
-    let metaStr = input.substring('data:'.length, commaPos);
+    // Early return for non-data URIs to avoid unnecessary processing
+    if (!uri.startsWith('data:')) {
+        return null;
+    }
+
+    // Find the first comma safely - this prevents ReDoS
+    const commaPos = uri.indexOf(',');
+    if (commaPos === -1) {
+        return null;
+    }
+
+    const data = uri.substring(commaPos + 1);
+    const metaStr = uri.substring('data:'.length, commaPos);
 
     let encoding;
+    const metaEntries = metaStr.split(';');
 
-    let metaEntries = metaStr.split(';');
-    let lastMetaEntry = metaEntries.length > 1 ? metaEntries[metaEntries.length - 1] : false;
-    if (lastMetaEntry && lastMetaEntry.indexOf('=') < 0) {
-        encoding = lastMetaEntry.toLowerCase();
-        metaEntries.pop();
-    }
-
-    let contentType = metaEntries.shift() || 'application/octet-stream';
-    let params = {};
-    for (let entry of metaEntries) {
-        let sep = entry.indexOf('=');
-        if (sep >= 0) {
-            let key = entry.substring(0, sep);
-            let value = entry.substring(sep + 1);
-            params[key] = value;
+    if (metaEntries.length > 0) {
+        const lastEntry = metaEntries[metaEntries.length - 1].toLowerCase().trim();
+        // Only recognize valid encoding types to prevent manipulation
+        if (['base64', 'utf8', 'utf-8'].includes(lastEntry) && lastEntry.indexOf('=') === -1) {
+            encoding = lastEntry;
+            metaEntries.pop();
         }
     }
 
-    switch (encoding) {
-        case 'base64':
-            data = Buffer.from(data, 'base64');
-            break;
-        case 'utf8':
-            data = Buffer.from(data);
-            break;
-        default:
-            try {
-                data = Buffer.from(decodeURIComponent(data));
-            } catch (err) {
-                data = Buffer.from(data);
+    const contentType = metaEntries.length > 0 ? metaEntries.shift() : 'application/octet-stream';
+    const params = {};
+
+    for (let i = 0; i < metaEntries.length; i++) {
+        const entry = metaEntries[i];
+        const sepPos = entry.indexOf('=');
+        if (sepPos > 0) {
+            // Ensure there's a key before the '='
+            const key = entry.substring(0, sepPos).trim();
+            const value = entry.substring(sepPos + 1).trim();
+            if (key) {
+                params[key] = value;
             }
-            data = Buffer.from(data);
+        }
     }
 
-    return { data, encoding, contentType, params };
+    // Decode data based on encoding with proper error handling
+    let bufferData;
+    try {
+        if (encoding === 'base64') {
+            bufferData = Buffer.from(data, 'base64');
+        } else {
+            try {
+                bufferData = Buffer.from(decodeURIComponent(data));
+            } catch (_decodeError) {
+                bufferData = Buffer.from(data);
+            }
+        }
+    } catch (_bufferError) {
+        bufferData = Buffer.alloc(0);
+    }
+
+    return {
+        data: bufferData,
+        encoding: encoding || null,
+        contentType: contentType || 'application/octet-stream',
+        params
+    };
 };
 
 /**

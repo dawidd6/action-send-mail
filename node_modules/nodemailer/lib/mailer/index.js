@@ -87,6 +87,11 @@ class Mail extends EventEmitter {
             this.transporter.on('idle', (...args) => {
                 this.emit('idle', ...args);
             });
+
+            // indicates if the sender has became idle and all connections are terminated
+            this.transporter.on('clear', (...args) => {
+                this.emit('clear', ...args);
+            });
         }
 
         /**
@@ -236,7 +241,14 @@ class Mail extends EventEmitter {
     }
 
     getVersionString() {
-        return util.format('%s (%s; +%s; %s/%s)', packageData.name, packageData.version, packageData.homepage, this.transporter.name, this.transporter.version);
+        return util.format(
+            '%s (%s; +%s; %s/%s)',
+            packageData.name,
+            packageData.version,
+            packageData.homepage,
+            this.transporter.name,
+            this.transporter.version
+        );
     }
 
     _processPlugins(step, mail, callback) {

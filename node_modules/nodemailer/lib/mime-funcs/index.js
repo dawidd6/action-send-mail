@@ -269,7 +269,7 @@ module.exports = {
 
             // first line includes the charset and language info and needs to be encoded
             // even if it does not contain any unicode characters
-            line = 'utf-8\x27\x27';
+            line = "utf-8''";
             let encoded = true;
             startPos = 0;
 
@@ -614,7 +614,7 @@ module.exports = {
         try {
             // might throw if we try to encode invalid sequences, eg. partial emoji
             str = encodeURIComponent(str);
-        } catch (E) {
+        } catch (_E) {
             // should never run
             return str.replace(/[^\x00-\x1F *'()<>@,;:\\"[\]?=\u007F-\uFFFF]+/g, '');
         }
