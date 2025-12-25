@@ -14,7 +14,7 @@ Some features:
 
 ```yaml
 - name: Send mail
-  uses: dawidd6/action-send-mail@v6
+  uses: dawidd6/action-send-mail@v7
   env:
     # Optional http proxy:
     HTTP_PROXY: http://proxy.example.test:3128
