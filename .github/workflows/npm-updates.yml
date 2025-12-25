@@ -1,0 +1,10 @@
+name: NPM Updates
+
+on:
+  workflow_dispatch:
+
+jobs:
+  npm-updates:
+    uses: dawidd6/reusable-workflows/.github/workflows/npm-updates.yml@master
+    secrets:
+      personal_access_token: ${{secrets.TOKEN}}
