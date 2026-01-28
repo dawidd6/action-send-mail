@@ -2,7 +2,7 @@
   "name": "action-send-mail",
   "main": "main.js",
   "dependencies": {
-    "@actions/core": "^2.0.2",
+    "@actions/core": "^2.0.3",
     "@actions/glob": "^0.5.0",
     "nodemailer": "^7.0.12",
     "showdown": "^1.9.1"
