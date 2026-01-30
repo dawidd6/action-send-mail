@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MatchKind = void 0;
 /**
  * Indicates whether a pattern matches a path
  */
-var MatchKind;
+export var MatchKind;
 (function (MatchKind) {
     /** Not matched */
     MatchKind[MatchKind["None"] = 0] = "None";
@@ -14,5 +11,5 @@ var MatchKind;
     MatchKind[MatchKind["File"] = 2] = "File";
     /** Matched */
     MatchKind[MatchKind["All"] = 3] = "All";
-})(MatchKind || (exports.MatchKind = MatchKind = {}));
+})(MatchKind || (MatchKind = {}));
 //# sourceMappingURL=internal-match-kind.js.map

@@ -1,27 +1,3 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -42,26 +18,25 @@ var __await = (this && this.__await) || function (v) { return this instanceof __
 var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _arguments, generator) {
     if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
     var g = generator.apply(thisArg, _arguments || []), i, q = [];
-    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
-    function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
+    return i = Object.create((typeof AsyncIterator === "function" ? AsyncIterator : Object).prototype), verb("next"), verb("throw"), verb("return", awaitReturn), i[Symbol.asyncIterator] = function () { return this; }, i;
+    function awaitReturn(f) { return function (v) { return Promise.resolve(v).then(f, reject); }; }
+    function verb(n, f) { if (g[n]) { i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; if (f) i[n] = f(i[n]); } }
     function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
     function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
     function fulfill(value) { resume("next", value); }
     function reject(value) { resume("throw", value); }
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DefaultGlobber = void 0;
-const core = __importStar(require("@actions/core"));
-const fs = __importStar(require("fs"));
-const globOptionsHelper = __importStar(require("./internal-glob-options-helper"));
-const path = __importStar(require("path"));
-const patternHelper = __importStar(require("./internal-pattern-helper"));
-const internal_match_kind_1 = require("./internal-match-kind");
-const internal_pattern_1 = require("./internal-pattern");
-const internal_search_state_1 = require("./internal-search-state");
+import * as core from '@actions/core';
+import * as fs from 'fs';
+import * as globOptionsHelper from './internal-glob-options-helper.js';
+import * as path from 'path';
+import * as patternHelper from './internal-pattern-helper.js';
+import { MatchKind } from './internal-match-kind.js';
+import { Pattern } from './internal-pattern.js';
+import { SearchState } from './internal-search-state.js';
 const IS_WINDOWS = process.platform === 'win32';
-class DefaultGlobber {
+export class DefaultGlobber {
     constructor(options) {
         this.patterns = [];
         this.searchPaths = [];
@@ -72,8 +47,8 @@ class DefaultGlobber {
         return this.searchPaths.slice();
     }
     glob() {
-        var _a, e_1, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, e_1, _b, _c;
             const result = [];
             try {
                 for (var _d = true, _e = __asyncValues(this.globGenerator()), _f; _f = yield _e.next(), _a = _f.done, !_a; _d = true) {
@@ -104,7 +79,7 @@ class DefaultGlobber {
                 if (options.implicitDescendants &&
                     (pattern.trailingSeparator ||
                         pattern.segments[pattern.segments.length - 1] !== '**')) {
-                    patterns.push(new internal_pattern_1.Pattern(pattern.negate, true, pattern.segments.concat('**')));
+                    patterns.push(new Pattern(pattern.negate, true, pattern.segments.concat('**')));
                 }
             }
             // Push the search paths
@@ -123,7 +98,7 @@ class DefaultGlobber {
                     }
                     throw err;
                 }
-                stack.unshift(new internal_search_state_1.SearchState(searchPath, 1));
+                stack.unshift(new SearchState(searchPath, 1));
             }
             // Search
             const traversalChain = []; // used to detect cycles
@@ -151,7 +126,7 @@ class DefaultGlobber {
                 // Directory
                 if (stats.isDirectory()) {
                     // Matched
-                    if (match & internal_match_kind_1.MatchKind.Directory && options.matchDirectories) {
+                    if (match & MatchKind.Directory && options.matchDirectories) {
                         yield yield __await(item.path);
                     }
                     // Descend?
@@ -160,11 +135,11 @@ class DefaultGlobber {
                     }
                     // Push the child items in reverse
                     const childLevel = item.level + 1;
-                    const childItems = (yield __await(fs.promises.readdir(item.path))).map(x => new internal_search_state_1.SearchState(path.join(item.path, x), childLevel));
+                    const childItems = (yield __await(fs.promises.readdir(item.path))).map(x => new SearchState(path.join(item.path, x), childLevel));
                     stack.push(...childItems.reverse());
                 }
                 // File
-                else if (match & internal_match_kind_1.MatchKind.File) {
+                else if (match & MatchKind.File) {
                     yield yield __await(item.path);
                 }
             }
@@ -188,7 +163,7 @@ class DefaultGlobber {
                 }
                 // Pattern
                 else {
-                    result.patterns.push(new internal_pattern_1.Pattern(line));
+                    result.patterns.push(new Pattern(line));
                 }
             }
             result.searchPaths.push(...patternHelper.getSearchPaths(result.patterns));
@@ -241,5 +216,4 @@ class DefaultGlobber {
         });
     }
 }
-exports.DefaultGlobber = DefaultGlobber;
 //# sourceMappingURL=internal-globber.js.map

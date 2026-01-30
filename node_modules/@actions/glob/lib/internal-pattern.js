@@ -1,41 +1,13 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Pattern = void 0;
-const os = __importStar(require("os"));
-const path = __importStar(require("path"));
-const pathHelper = __importStar(require("./internal-path-helper"));
-const assert_1 = __importDefault(require("assert"));
-const minimatch_1 = require("minimatch");
-const internal_match_kind_1 = require("./internal-match-kind");
-const internal_path_1 = require("./internal-path");
+import * as os from 'os';
+import * as path from 'path';
+import * as pathHelper from './internal-path-helper.js';
+import assert from 'assert';
+import minimatch from 'minimatch';
+import { MatchKind } from './internal-match-kind.js';
+import { Path } from './internal-path.js';
+const { Minimatch } = minimatch;
 const IS_WINDOWS = process.platform === 'win32';
-class Pattern {
+export class Pattern {
     constructor(patternOrNegate, isImplicitPattern = false, segments, homedir) {
         /**
          * Indicates whether matches should be excluded from the result set
@@ -50,10 +22,10 @@ class Pattern {
         else {
             // Convert to pattern
             segments = segments || [];
-            (0, assert_1.default)(segments.length, `Parameter 'segments' must not empty`);
+            assert(segments.length, `Parameter 'segments' must not empty`);
             const root = Pattern.getLiteral(segments[0]);
-            (0, assert_1.default)(root && pathHelper.hasAbsoluteRoot(root), `Parameter 'segments' first element must be a root path`);
-            pattern = new internal_path_1.Path(segments).toString().trim();
+            assert(root && pathHelper.hasAbsoluteRoot(root), `Parameter 'segments' first element must be a root path`);
+            pattern = new Path(segments).toString().trim();
             if (patternOrNegate) {
                 pattern = `!${pattern}`;
             }
@@ -66,7 +38,7 @@ class Pattern {
         // Normalize slashes and ensures absolute root
         pattern = Pattern.fixupPattern(pattern, homedir);
         // Segments
-        this.segments = new internal_path_1.Path(pattern).segments;
+        this.segments = new Path(pattern).segments;
         // Trailing slash indicates the pattern should only match directories, not regular files
         this.trailingSeparator = pathHelper
             .normalizeSeparators(pattern)
@@ -77,7 +49,7 @@ class Pattern {
         const searchSegments = this.segments
             .map(x => Pattern.getLiteral(x))
             .filter(x => !foundGlob && !(foundGlob = x === ''));
-        this.searchPath = new internal_path_1.Path(searchSegments).toString();
+        this.searchPath = new Path(searchSegments).toString();
         // Root RegExp (required when determining partial match)
         this.rootRegExp = new RegExp(Pattern.regExpEscape(searchSegments[0]), IS_WINDOWS ? 'i' : '');
         this.isImplicitPattern = isImplicitPattern;
@@ -91,7 +63,7 @@ class Pattern {
             nonegate: true
         };
         pattern = IS_WINDOWS ? pattern.replace(/\\/g, '/') : pattern;
-        this.minimatch = new minimatch_1.Minimatch(pattern, minimatchOptions);
+        this.minimatch = new Minimatch(pattern, minimatchOptions);
     }
     /**
      * Matches the pattern against the specified path
@@ -116,9 +88,9 @@ class Pattern {
         }
         // Match
         if (this.minimatch.match(itemPath)) {
-            return this.trailingSeparator ? internal_match_kind_1.MatchKind.Directory : internal_match_kind_1.MatchKind.All;
+            return this.trailingSeparator ? MatchKind.Directory : MatchKind.All;
         }
-        return internal_match_kind_1.MatchKind.None;
+        return MatchKind.None;
     }
     /**
      * Indicates whether the pattern may match descendants of the specified path
@@ -146,13 +118,13 @@ class Pattern {
      */
     static fixupPattern(pattern, homedir) {
         // Empty
-        (0, assert_1.default)(pattern, 'pattern cannot be empty');
+        assert(pattern, 'pattern cannot be empty');
         // Must not contain `.` segment, unless first segment
         // Must not contain `..` segment
-        const literalSegments = new internal_path_1.Path(pattern).segments.map(x => Pattern.getLiteral(x));
-        (0, assert_1.default)(literalSegments.every((x, i) => (x !== '.' || i === 0) && x !== '..'), `Invalid pattern '${pattern}'. Relative pathing '.' and '..' is not allowed.`);
+        const literalSegments = new Path(pattern).segments.map(x => Pattern.getLiteral(x));
+        assert(literalSegments.every((x, i) => (x !== '.' || i === 0) && x !== '..'), `Invalid pattern '${pattern}'. Relative pathing '.' and '..' is not allowed.`);
         // Must not contain globs in root, e.g. Windows UNC path \\foo\b*r
-        (0, assert_1.default)(!pathHelper.hasRoot(pattern) || literalSegments[0], `Invalid pattern '${pattern}'. Root segment must not contain globs.`);
+        assert(!pathHelper.hasRoot(pattern) || literalSegments[0], `Invalid pattern '${pattern}'. Root segment must not contain globs.`);
         // Normalize slashes
         pattern = pathHelper.normalizeSeparators(pattern);
         // Replace leading `.` segment
@@ -162,8 +134,8 @@ class Pattern {
         // Replace leading `~` segment
         else if (pattern === '~' || pattern.startsWith(`~${path.sep}`)) {
             homedir = homedir || os.homedir();
-            (0, assert_1.default)(homedir, 'Unable to determine HOME directory');
-            (0, assert_1.default)(pathHelper.hasAbsoluteRoot(homedir), `Expected HOME directory to be a rooted path. Actual '${homedir}'`);
+            assert(homedir, 'Unable to determine HOME directory');
+            assert(pathHelper.hasAbsoluteRoot(homedir), `Expected HOME directory to be a rooted path. Actual '${homedir}'`);
             pattern = Pattern.globEscape(homedir) + pattern.substr(1);
         }
         // Replace relative drive root, e.g. pattern is C: or C:foo
@@ -255,5 +227,4 @@ class Pattern {
         return s.replace(/[[\\^$.|?*+()]/g, '\\$&');
     }
 }
-exports.Pattern = Pattern;
 //# sourceMappingURL=internal-pattern.js.map
