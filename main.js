@@ -1,9 +1,9 @@
 import nodemailer from "nodemailer";
 import * as core from "@actions/core";
 import * as glob from "@actions/glob";
-import fs from "fs";
+import fs from "node:fs";
 import showdown from "showdown";
-import path from "path";
+import path from "node:path";
 
 function getText(textOrFile, convertMarkdown) {
     let text = textOrFile;
