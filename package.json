@@ -1,5 +1,6 @@
 {
   "name": "action-send-mail",
+  "type": "module",
   "main": "main.js",
   "dependencies": {
     "@actions/core": "^3.0.0",

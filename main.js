@@ -1,9 +1,9 @@
-const nodemailer = require("nodemailer");
-const core = require("@actions/core");
-const glob = require("@actions/glob");
-const fs = require("fs");
-const showdown = require("showdown");
-const path = require("path");
+import nodemailer from "nodemailer";
+import * as core from "@actions/core";
+import * as glob from "@actions/glob";
+import fs from "node:fs";
+import showdown from "showdown";
+import path from "node:path";
 
 function getText(textOrFile, convertMarkdown) {
     let text = textOrFile;
