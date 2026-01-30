@@ -1,4 +1,4 @@
-import { GlobOptions } from './internal-glob-options';
+import { GlobOptions } from './internal-glob-options.js';
 export { GlobOptions };
 /**
  * Used to match files and directories

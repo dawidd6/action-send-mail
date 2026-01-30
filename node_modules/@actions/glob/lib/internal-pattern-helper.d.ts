@@ -1,5 +1,5 @@
-import { MatchKind } from './internal-match-kind';
-import { Pattern } from './internal-pattern';
+import { MatchKind } from './internal-match-kind.js';
+import { Pattern } from './internal-pattern.js';
 /**
  * Given an array of patterns, returns an array of paths to search.
  * Duplicates and paths under other included paths are filtered out.

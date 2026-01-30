@@ -1,4 +1,4 @@
-import { MatchKind } from './internal-match-kind';
+import { MatchKind } from './internal-match-kind.js';
 export declare class Pattern {
     /**
      * Indicates whether matches should be excluded from the result set

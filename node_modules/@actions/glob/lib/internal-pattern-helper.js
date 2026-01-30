@@ -1,37 +1,11 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.partialMatch = exports.match = exports.getSearchPaths = void 0;
-const pathHelper = __importStar(require("./internal-path-helper"));
-const internal_match_kind_1 = require("./internal-match-kind");
+import * as pathHelper from './internal-path-helper.js';
+import { MatchKind } from './internal-match-kind.js';
 const IS_WINDOWS = process.platform === 'win32';
 /**
  * Given an array of patterns, returns an array of paths to search.
  * Duplicates and paths under other included paths are filtered out.
  */
-function getSearchPaths(patterns) {
+export function getSearchPaths(patterns) {
     // Ignore negate patterns
     patterns = patterns.filter(x => !x.negate);
     // Create a map of all search paths
@@ -71,12 +45,11 @@ function getSearchPaths(patterns) {
     }
     return result;
 }
-exports.getSearchPaths = getSearchPaths;
 /**
  * Matches the patterns against the path
  */
-function match(patterns, itemPath) {
-    let result = internal_match_kind_1.MatchKind.None;
+export function match(patterns, itemPath) {
+    let result = MatchKind.None;
     for (const pattern of patterns) {
         if (pattern.negate) {
             result &= ~pattern.match(itemPath);
@@ -87,12 +60,10 @@ function match(patterns, itemPath) {
     }
     return result;
 }
-exports.match = match;
 /**
  * Checks whether to descend further into the directory
  */
-function partialMatch(patterns, itemPath) {
+export function partialMatch(patterns, itemPath) {
     return patterns.some(x => !x.negate && x.partialMatch(itemPath));
 }
-exports.partialMatch = partialMatch;
 //# sourceMappingURL=internal-pattern-helper.js.map
