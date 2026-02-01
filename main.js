@@ -37,7 +37,6 @@ async function getAttachments(attachments) {
     return files.map((f) => ({
         filename: path.basename(f),
         path: f,
-        cid: f.replace(/^.*[\\\/]/, ""),
     }));
 }
 
