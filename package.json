@@ -5,7 +5,7 @@
   "dependencies": {
     "@actions/core": "^3.0.0",
     "@actions/glob": "^0.6.1",
-    "nodemailer": "^8.0.0",
+    "nodemailer": "^8.0.1",
     "showdown": "^1.9.1"
   }
 }
