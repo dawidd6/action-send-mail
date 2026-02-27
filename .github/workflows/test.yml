@@ -46,6 +46,7 @@ jobs:
           convert_markdown: true
           attachments: package.json,action.yml
           priority: high
+          headers: '{"X-My-Test-Header": "Passed"}'
 
       - name: Get mail
         run: |
