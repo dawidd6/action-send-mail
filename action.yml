@@ -57,6 +57,9 @@ inputs:
   priority:
     description: Set Priority level for the mail message to 'high', 'normal' (default) or 'low'
     required: false
+  headers:
+    description: 'Custom headers for the mail message as a JSON string (e.g., {"X-Custom-Header": "value"})'
+    required: false
   nodemailerlog:
     description: Log option for nodemailer
     required: false
