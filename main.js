@@ -111,7 +111,7 @@ async function main() {
 
         // Basic check for an email sender address
         // Either: "Plain Simple Name <user@doma.in>" or just "user@doma.in" (without the <>)
-        if (!(/^([^<>@\s]+\s+)+<[^@\s]+@[^@\s]+>$/.test(from) || /^[^<>@\s]+@[^@\s<>]+$/.test(from))) {
+        if (!(/^([^<>@\s]+\s+)+<[^@\s>]+@[^@\s>]+>$/.test(from) || /^[^<>@\s]+@[^@\s<>]+$/.test(from))) {
             throw new Error("'from' address is invalid");
         }
 

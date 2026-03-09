@@ -41,9 +41,9 @@ Some features:
     subject: Github Actions job result
     # Optional recipients' addresses:
     to: obiwan@example.com,yoda@example.com
-    # Required sender (Either: "Plain Simple Name <user@doma.in>" or just "user@doma.in" (without the <>)
+    # Required sender (Either: "Plain Simple Name <user@doma.in>" or just "user@doma.in" (without the <>))
     # Important: '<' and '>' are special chars in yaml. Therefore this string should be quoted
-    from: Luke Skywalker # <user@example.com>
+    from: 'Luke Skywalker <user@example.com>'
     # Optional plain body:
     body: Build job of ${{github.repository}} completed successfully!
     # Optional HTML body read from file:
