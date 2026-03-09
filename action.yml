@@ -25,7 +25,7 @@ inputs:
     description: Recipients mail addresses (separated with comma)
     required: false
   from:
-    description: Full name of mail sender (might be with an email address specified in <>)
+    description: 'Either a plain email address, or full name of the sender, followed by whitespace, followed by email address enclosed in <>'
     required: true
   body:
     description: Body of mail message (might be a filename prefixed with file:// to read from)
