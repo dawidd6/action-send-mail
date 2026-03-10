@@ -23,14 +23,6 @@ function getText(textOrFile, convertMarkdown) {
     return text;
 }
 
-function getFrom(from, username) {
-    if (from.match(/.+ <.+@.+>/)) {
-        return from;
-    }
-
-    return `"${from}" <${username}>`;
-}
-
 async function getAttachments(attachments) {
     const globber = await glob.create(attachments.split(",").join("\n"));
     const files = await globber.glob();
@@ -117,6 +109,12 @@ async function main() {
         const envelopeTo = core.getInput("envelope_to", { required: false });
         const headers = core.getInput("headers", { required: false });
 
+        // Basic check for an email sender address
+        // Either: "Plain Simple Name <user@doma.in>" or just "user@doma.in" (without the <>)
+        if (!(/^([^<>@\s]+\s+)+<[^@\s>]+@[^@\s>]+>$/.test(from) || /^[^<>@\s]+@[^@\s<>]+$/.test(from))) {
+            throw new Error("'from' address is invalid");
+        }
+
         // if neither to, cc or bcc is provided, throw error
         if (!to && !cc && !bcc) {
             throw new Error(
@@ -150,11 +148,11 @@ async function main() {
             proxy: process.env.HTTP_PROXY,
         });
 
-        var i = 1;
+        let i = 1;
         while (true) {
             try {
                 const info = await transport.sendMail({
-                    from: getFrom(from, username),
+                    from: from,
                     to: to,
                     subject: getText(subject, false),
                     cc: cc ? cc : undefined,
