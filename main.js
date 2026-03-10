@@ -39,6 +39,36 @@ function sleep(ms) {
     });
 }
 
+/**
+ * Prepare an envelope object for nodemailer.
+ *
+ * If only one of envelopeFrom or envelopeTo is set, make shure that both
+ * are set in the returned object. Furthermore, make shure, that the attribute 'to'
+ * is an array of email adresses, not a comma-separated string.
+ */
+function setupEnvelope(envelopeFrom, envelopeTo, from, to, cc, bcc) {
+    if (envelopeFrom || envelopeTo) {
+        if (!envelopeFrom) {
+            // Take address in from
+            envelopeFrom = from.replace(/^([^<>@\s]+\s+)*<([^@\s]+@[^@\s]+)>$/, "$2");
+        }
+        if (!envelopeTo) {
+            // Take addresses in to, cc and bcc. This might produce
+            // duplicates which get removed when assigning to the returned object.
+            for (const src of [to, cc, bcc]) {
+                if (src) {
+                    envelopeTo = envelopeTo ? envelopeTo + ',' + src : src;
+                }
+            }
+        }
+        return {
+            from: envelopeFrom,
+            to: [...new Set(envelopeTo.split(/\s*,\s*/))],
+        };
+    }
+    return undefined;
+}
+
 async function main() {
     try {
         let serverAddress = core.getInput("server_address");
@@ -148,35 +178,31 @@ async function main() {
             proxy: process.env.HTTP_PROXY,
         });
 
+        const nmparam = {
+            from: from,
+            to: to,
+            subject: getText(subject, false),
+            cc: cc ? cc : undefined,
+            bcc: bcc ? bcc : undefined,
+            replyTo: replyTo ? replyTo : undefined,
+            inReplyTo: inReplyTo ? inReplyTo : undefined,
+            references: inReplyTo ? inReplyTo : undefined,
+            text: body ? getText(body, false) : undefined,
+            html: htmlBody
+                ? getText(htmlBody, convertMarkdown)
+                : undefined,
+            priority: priority ? priority : undefined,
+            headers: headers ? JSON.parse(headers) : undefined,
+            attachments: attachments
+                ? await getAttachments(attachments)
+                : undefined,
+            envelope: setupEnvelope(envelopeFrom, envelopeTo, from, to, cc, bcc),
+        };
+
         let i = 1;
         while (true) {
             try {
-                const info = await transport.sendMail({
-                    from: from,
-                    to: to,
-                    subject: getText(subject, false),
-                    cc: cc ? cc : undefined,
-                    bcc: bcc ? bcc : undefined,
-                    replyTo: replyTo ? replyTo : undefined,
-                    inReplyTo: inReplyTo ? inReplyTo : undefined,
-                    references: inReplyTo ? inReplyTo : undefined,
-                    text: body ? getText(body, false) : undefined,
-                    html: htmlBody
-                        ? getText(htmlBody, convertMarkdown)
-                        : undefined,
-                    priority: priority ? priority : undefined,
-                    headers: headers ? JSON.parse(headers) : undefined,
-                    attachments: attachments
-                        ? await getAttachments(attachments)
-                        : undefined,
-                    envelope:
-                        envelopeFrom || envelopeTo
-                            ? {
-                                  from: envelopeFrom ? envelopeFrom : undefined,
-                                  to: envelopeTo ? envelopeTo : undefined,
-                              }
-                            : undefined,
-                });
+                const info = await transport.sendMail(nmparam);
                 break;
             } catch (error) {
                 if (!error.message.includes("Try again later,")) {
