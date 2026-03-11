@@ -46,7 +46,7 @@ Some features:
     # Required mail subject:
     subject: Github Actions job result
 
-    # Optional recipients. Separate multiple addresses by a comma (possible surrounded by whitespace):
+    # Optional recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
     to: obiwan@example.com, yoda@example.com
 
     # Required sender (Either: "Plain Simple Name <user@doma.in>" or just "user@doma.in" (without the <>))
@@ -59,10 +59,10 @@ Some features:
     # Optional HTML body read from file:
     html_body: file://README.html
 
-    # Optional carbon copy recipients.  Separate multiple addresses by a comma (possible surrounded by whitespace):
+    # Optional carbon copy recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
     cc: kyloren@example.com, leia@example.com
 
-    # Optional blind carbon copy recipients. Separate multiple addresses by a comma (possible surrounded by whitespace):
+    # Optional blind carbon copy recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
     bcc: r2d2@example.com, hansolo@example.com
 
     # Optional recipient of the email response:
