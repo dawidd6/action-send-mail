@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import addressparser from "nodemailer/lib/addressparser/index.js";
 import * as core from "@actions/core";
 import * as glob from "@actions/glob";
 import fs from "node:fs";
@@ -50,20 +51,20 @@ function setupEnvelope(envelopeFrom, envelopeTo, from, to, cc, bcc) {
     if (envelopeFrom || envelopeTo) {
         if (!envelopeFrom) {
             // Take address in from
-            envelopeFrom = from.replace(/^([^<>@\s]+\s+)*<([^@\s]+@[^@\s]+)>$/, "$2");
+            envelopeFrom = addressparser(from);
         }
         if (!envelopeTo) {
-            // Take addresses in to, cc and bcc. This might produce
-            // duplicates which get removed when assigning to the returned object.
+            // Take addresses in to, cc and bcc. Deduplication is handled by nodemailer.
             for (const src of [to, cc, bcc]) {
                 if (src) {
-                    envelopeTo = envelopeTo ? envelopeTo + ',' + src : src;
+                    let parsed = addressparser(src);
+                    envelopeTo = envelopeTo ? envelopeTo.concat(parsed) : parsed;
                 }
             }
         }
         return {
             from: envelopeFrom,
-            to: [...new Set(envelopeTo.split(/\s*,\s*/))],
+            to: envelopeTo,
         };
     }
     return undefined;
@@ -141,7 +142,8 @@ async function main() {
 
         // Basic check for an email sender address
         // Either: "Plain Simple Name <user@doma.in>" or just "user@doma.in" (without the <>)
-        if (!(/^([^<>@\s]+\s+)+<[^@\s>]+@[^@\s>]+>$/.test(from) || /^[^<>@\s]+@[^@\s<>]+$/.test(from))) {
+        let parsed = addressparser(from);
+        if (parsed.length != 1 || parsed[0].address == '') {
             throw new Error("'from' address is invalid");
         }
 
