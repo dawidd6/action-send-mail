@@ -42,9 +42,9 @@ function sleep(ms) {
 /**
  * Prepare an envelope object for nodemailer.
  *
- * If only one of envelopeFrom or envelopeTo is set, make shure that both
- * are set in the returned object. Furthermore, make shure, that the attribute 'to'
- * is an array of email adresses, not a comma-separated string.
+ * If only one of envelopeFrom or envelopeTo is set, make sure that both
+ * are set in the returned object. Furthermore, make sure that the attribute 'to'
+ * is an array of email addresses, not a comma-separated string.
  */
 function setupEnvelope(envelopeFrom, envelopeTo, from, to, cc, bcc) {
     if (envelopeFrom || envelopeTo) {
