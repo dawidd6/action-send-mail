@@ -49,8 +49,7 @@ Some features:
     # Optional recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
     to: obiwan@example.com, yoda@example.com
 
-    # Required sender (Either: "Plain Simple Name <user@doma.in>" or just "user@doma.in" (without the <>))
-    # Important: '<' and '>' are special chars in yaml. Therefore this string should be quoted
+    # Required sender (supported formats: see [below](#supported-address-formats))
     from: 'Luke Skywalker <user@example.com>'
 
     # Optional plain body:
@@ -60,7 +59,7 @@ Some features:
     html_body: file://README.html
 
     # Optional carbon copy recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
-    cc: kyloren@example.com, leia@example.com
+    cc: 'kyloren@example.com, "Her Majesty, Princess Leia" <leia@example.com>'
 
     # Optional blind carbon copy recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
     bcc: r2d2@example.com, hansolo@example.com
@@ -104,6 +103,10 @@ Some features:
 
 * If only `envelope_from` is set, `envelope_to` will be set to the concatenation of `to`, `cc` and `bcc` (with duplicates removed).
 * If only `envelope_to` is set, `envelope_from` will be set to the address specified in `from`.
+
+### Supported address formats
+This action now uses nodemailer's addressparser. The supported address formats are described [here](https://nodemailer.com/message/addresses).
+Mail addresses can contain YAML special characters like '<' and '>'. Therefore, these addresses should always be enclosed in single quotes.
 
 ## Troubleshooting
 
