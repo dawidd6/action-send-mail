@@ -69,7 +69,7 @@ Some features:
     reply_to: luke@example.com
 
     # Optional Message ID this message is replying to:
-    in_reply_to: <random-luke@example.com>
+    in_reply_to: '<3cc627c8-6181-453b-d90b-04aae9e23b21@github.com>'
 
     # Optional unsigned/invalid certificates allowance:
     ignore_cert: true
