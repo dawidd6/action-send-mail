@@ -49,7 +49,7 @@ Some features:
     # Optional recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
     to: obiwan@example.com, yoda@example.com
 
-    # Required sender (supported formats: see [below](#supported-address-formats))
+    # Required sender (supported formats: see "Supported address formats" below)
     from: 'Luke Skywalker <user@example.com>'
 
     # Optional plain body:
