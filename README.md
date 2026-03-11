@@ -95,7 +95,7 @@ Some features:
     # Optional custom SMTP MAIL FROM address (overrides username):
     envelope_from: mailer@example.com
 
-    # Optional custom SMTP RCPT TO addresses (overrides to, cc, bcc) Separate multiple addresses by a comma (possible surrounded by whitespace):
+    # Optional custom SMTP RCPT TO addresses (overrides to, cc, bcc). Separate multiple addresses by a comma (possibly surrounded by whitespace):
     envelope_to: mailer@example.com, admin@example.com
 ```
 ### Remark for `envelope_from` and `envelope_to`
