@@ -178,7 +178,7 @@ async function main() {
             proxy: process.env.HTTP_PROXY,
         });
 
-        const nmparam = {
+        const messageOptions = {
             from: from,
             to: to,
             subject: getText(subject, false),
@@ -202,7 +202,7 @@ async function main() {
         let i = 1;
         while (true) {
             try {
-                const info = await transport.sendMail(nmparam);
+                const info = await transport.sendMail(messageOptions);
                 break;
             } catch (error) {
                 if (!error.message.includes("Try again later,")) {
