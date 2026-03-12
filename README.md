@@ -106,7 +106,7 @@ Some features:
 
 ### Supported address formats
 This action now uses nodemailer's addressparser. The supported address formats are described [here](https://nodemailer.com/message/addresses).
-Mail addresses can contain YAML special characters like '<' and '>'. Therefore, these addresses should always be enclosed in single quotes.
+Mail addresses can contain YAML special characters like '<' and '>'. To avoid YAML parsing issues, addresses that contain such characters should be enclosed in single quotes.
 
 ## Troubleshooting
 
