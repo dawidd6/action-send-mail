@@ -49,11 +49,14 @@ function sleep(ms) {
  */
 function setupEnvelope(envelopeFrom, envelopeTo, from, to, cc, bcc) {
     if (envelopeFrom || envelopeTo) {
-        if (!envelopeFrom) {
-            // Take address in from
-            envelopeFrom = addressparser(from);
+        // Take address in from, if envelopeFrom is not set.
+        envelopeFrom = envelopeFrom ? addressparser(envelopeFrom) : addressparser(from);
+        if (envelopeFrom.length != 1 || envelopeFrom[0].address == '') {
+            throw new Error("'envelopeFrom' address is invalid");
         }
-        if (!envelopeTo) {
+        if (envelopeTo) {
+            envelopeTo = addressparser(envelopeTo);
+        } else {
             // Take addresses in to, cc and bcc. Deduplication is handled by nodemailer.
             for (const src of [to, cc, bcc]) {
                 if (src) {
