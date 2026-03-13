@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import addressparser from "nodemailer/lib/addressparser/index.js";
 import * as core from "@actions/core";
 import * as glob from "@actions/glob";
 import fs from "node:fs";
@@ -37,6 +38,39 @@ function sleep(ms) {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
     });
+}
+
+/**
+ * Prepare an envelope object for nodemailer.
+ *
+ * If only one of envelopeFrom or envelopeTo is set, make sure that both
+ * are set in the returned object. Furthermore, make sure that the attribute 'to'
+ * is an array of email addresses, not a comma-separated string.
+ */
+function setupEnvelope(envelopeFrom, envelopeTo, from, to, cc, bcc) {
+    if (envelopeFrom || envelopeTo) {
+        // Take address in from, if envelopeFrom is not set.
+        envelopeFrom = envelopeFrom ? addressparser(envelopeFrom) : addressparser(from);
+        if (envelopeFrom.length != 1 || envelopeFrom[0].address == '') {
+            throw new Error("'envelopeFrom' address is invalid");
+        }
+        if (envelopeTo) {
+            envelopeTo = addressparser(envelopeTo);
+        } else {
+            // Take addresses in to, cc and bcc. Deduplication is handled by nodemailer.
+            for (const src of [to, cc, bcc]) {
+                if (src) {
+                    let parsed = addressparser(src);
+                    envelopeTo = envelopeTo ? envelopeTo.concat(parsed) : parsed;
+                }
+            }
+        }
+        return {
+            from: envelopeFrom,
+            to: envelopeTo,
+        };
+    }
+    return undefined;
 }
 
 async function main() {
@@ -111,7 +145,8 @@ async function main() {
 
         // Basic check for an email sender address
         // Either: "Plain Simple Name <user@doma.in>" or just "user@doma.in" (without the <>)
-        if (!(/^([^<>@\s]+\s+)+<[^@\s>]+@[^@\s>]+>$/.test(from) || /^[^<>@\s]+@[^@\s<>]+$/.test(from))) {
+        let parsed = addressparser(from);
+        if (parsed.length != 1 || parsed[0].address == '') {
             throw new Error("'from' address is invalid");
         }
 
@@ -148,35 +183,31 @@ async function main() {
             proxy: process.env.HTTP_PROXY,
         });
 
+        const messageOptions = {
+            from: from,
+            to: to,
+            subject: getText(subject, false),
+            cc: cc ? cc : undefined,
+            bcc: bcc ? bcc : undefined,
+            replyTo: replyTo ? replyTo : undefined,
+            inReplyTo: inReplyTo ? inReplyTo : undefined,
+            references: inReplyTo ? inReplyTo : undefined,
+            text: body ? getText(body, false) : undefined,
+            html: htmlBody
+                ? getText(htmlBody, convertMarkdown)
+                : undefined,
+            priority: priority ? priority : undefined,
+            headers: headers ? JSON.parse(headers) : undefined,
+            attachments: attachments
+                ? await getAttachments(attachments)
+                : undefined,
+            envelope: setupEnvelope(envelopeFrom, envelopeTo, from, to, cc, bcc),
+        };
+
         let i = 1;
         while (true) {
             try {
-                const info = await transport.sendMail({
-                    from: from,
-                    to: to,
-                    subject: getText(subject, false),
-                    cc: cc ? cc : undefined,
-                    bcc: bcc ? bcc : undefined,
-                    replyTo: replyTo ? replyTo : undefined,
-                    inReplyTo: inReplyTo ? inReplyTo : undefined,
-                    references: inReplyTo ? inReplyTo : undefined,
-                    text: body ? getText(body, false) : undefined,
-                    html: htmlBody
-                        ? getText(htmlBody, convertMarkdown)
-                        : undefined,
-                    priority: priority ? priority : undefined,
-                    headers: headers ? JSON.parse(headers) : undefined,
-                    attachments: attachments
-                        ? await getAttachments(attachments)
-                        : undefined,
-                    envelope:
-                        envelopeFrom || envelopeTo
-                            ? {
-                                  from: envelopeFrom ? envelopeFrom : undefined,
-                                  to: envelopeTo ? envelopeTo : undefined,
-                              }
-                            : undefined,
-                });
+                const info = await transport.sendMail(messageOptions);
                 break;
             } catch (error) {
                 if (!error.message.includes("Try again later,")) {
