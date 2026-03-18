@@ -147,8 +147,8 @@ async function main() {
         // Either: "Plain Simple Name <user@doma.in>" or just "user@doma.in" (without the <>)
         let parsed = addressparser(from);
         if (parsed.length != 1 || parsed[0].address == '') {
-            // Report error  only if user did NOT set envelope_from. Otherwise envelope_from
-            // overrides from anyway and from is used as is. (but nodemailer will eliminate
+            // Report an error only if the user did not set envelope_from. Otherwise, envelope_from
+            // overrides from anyway and from is used as is (but Nodemailer will remove
             // the From: header completely).
             if (envelopeFrom) {
                 core.warning("'from' address is invalid. Nodemailer will not create a 'From:' header.");
