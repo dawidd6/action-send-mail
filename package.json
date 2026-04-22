@@ -4,7 +4,7 @@
   "main": "main.js",
   "dependencies": {
     "@actions/core": "^3.0.1",
-    "@actions/glob": "^0.6.1",
+    "@actions/glob": "^0.7.0",
     "nodemailer": "^8.0.5",
     "showdown": "^2.1.0"
   }
