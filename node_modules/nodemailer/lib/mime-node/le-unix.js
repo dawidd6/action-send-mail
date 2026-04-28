@@ -1,18 +1,15 @@
 'use strict';
 
-const stream = require('stream');
-const Transform = stream.Transform;
+const { Transform } = require('stream');
 
 /**
  * Ensures that only <LF> is used for linebreaks
  *
  * @param {Object} options Stream options
  */
-class LeWindows extends Transform {
+class LeUnix extends Transform {
     constructor(options) {
         super(options);
-        // init Transform
-        this.options = options || {};
     }
 
     /**
@@ -24,7 +21,7 @@ class LeWindows extends Transform {
 
         for (let i = 0, len = chunk.length; i < len; i++) {
             if (chunk[i] === 0x0d) {
-                // \n
+                // \r
                 buf = chunk.slice(lastPos, i);
                 lastPos = i + 1;
                 this.push(buf);
@@ -40,4 +37,4 @@ class LeWindows extends Transform {
     }
 }
 
-module.exports = LeWindows;
+module.exports = LeUnix;

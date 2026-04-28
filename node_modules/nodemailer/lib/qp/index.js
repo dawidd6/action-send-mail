@@ -1,6 +1,6 @@
 'use strict';
 
-const Transform = require('stream').Transform;
+const { Transform } = require('stream');
 
 /**
  * Encodes a Buffer into a Quoted-Printable encoded string
@@ -8,20 +8,21 @@ const Transform = require('stream').Transform;
  * @param {Buffer} buffer Buffer to convert
  * @returns {String} Quoted-Printable encoded string
  */
+// usable characters that do not need encoding
+// https://tools.ietf.org/html/rfc2045#section-6.7
+const QP_RANGES = [
+    [0x09], // <TAB>
+    [0x0a], // <LF>
+    [0x0d], // <CR>
+    [0x20, 0x3c], // <SP>!"#$%&'()*+,-./0123456789:;
+    [0x3e, 0x7e] // >?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
+];
+
 function encode(buffer) {
     if (typeof buffer === 'string') {
         buffer = Buffer.from(buffer, 'utf-8');
     }
 
-    // usable characters that do not need encoding
-    let ranges = [
-        // https://tools.ietf.org/html/rfc2045#section-6.7
-        [0x09], // <TAB>
-        [0x0a], // <LF>
-        [0x0d], // <CR>
-        [0x20, 0x3c], // <SP>!"#$%&'()*+,-./0123456789:;
-        [0x3e, 0x7e] // >?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
-    ];
     let result = '';
     let ord;
 
@@ -29,7 +30,7 @@ function encode(buffer) {
         ord = buffer[i];
         // if the char is in allowed range, then keep as is, unless it is a WS in the end of a line
         if (
-            checkRanges(ord, ranges) &&
+            checkRanges(ord, QP_RANGES) &&
             !((ord === 0x20 || ord === 0x09) && (i === len - 1 || buffer[i + 1] === 0x0a || buffer[i + 1] === 0x0d))
         ) {
             result += String.fromCharCode(ord);
@@ -57,9 +58,9 @@ function wrap(str, lineLength) {
     }
 
     let pos = 0;
-    let len = str.length;
+    const len = str.length;
     let match, code, line;
-    let lineMargin = Math.floor(lineLength / 3);
+    const lineMargin = Math.floor(lineLength / 3);
     let result = '';
 
     // insert soft linebreaks where needed
@@ -73,17 +74,20 @@ function wrap(str, lineLength) {
         }
 
         if (line.substr(-1) === '\n') {
-            // nothing to change here
             result += line;
             pos += line.length;
             continue;
-        } else if ((match = line.substr(-lineMargin).match(/\n.*?$/))) {
+        }
+
+        if ((match = line.substr(-lineMargin).match(/\n.*?$/))) {
             // truncate to nearest line break
             line = line.substr(0, line.length - (match[0].length - 1));
             result += line;
             pos += line.length;
             continue;
-        } else if (line.length > lineLength - lineMargin && (match = line.substr(-lineMargin).match(/[ \t.,!?][^ \t.,!?]*$/))) {
+        }
+
+        if (line.length > lineLength - lineMargin && (match = line.substr(-lineMargin).match(/[ \t.,!?][^ \t.,!?]*$/))) {
             // truncate to nearest space
             line = line.substr(0, line.length - (match[0].length - 1));
         } else if (line.match(/[=][\da-f]{0,2}$/i)) {
@@ -139,13 +143,14 @@ function wrap(str, lineLength) {
  */
 function checkRanges(nr, ranges) {
     for (let i = ranges.length - 1; i >= 0; i--) {
-        if (!ranges[i].length) {
+        const range = ranges[i];
+        if (!range.length) {
             continue;
         }
-        if (ranges[i].length === 1 && nr === ranges[i][0]) {
+        if (range.length === 1 && nr === range[0]) {
             return true;
         }
-        if (ranges[i].length === 2 && nr >= ranges[i][0] && nr <= ranges[i][1]) {
+        if (range.length === 2 && nr >= range[0] && nr <= range[1]) {
             return true;
         }
     }
@@ -163,7 +168,6 @@ class Encoder extends Transform {
     constructor(options) {
         super();
 
-        // init Transform
         this.options = options || {};
 
         if (this.options.lineLength !== false) {
@@ -219,7 +223,6 @@ class Encoder extends Transform {
     }
 }
 
-// expose to the world
 module.exports = {
     encode,
     wrap,
