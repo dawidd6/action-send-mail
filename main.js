@@ -170,6 +170,7 @@ async function main() {
 
         const transport = nodemailer.createTransport({
             host: serverAddress,
+            name: "github.com",
             auth:
                 username && password
                     ? {
