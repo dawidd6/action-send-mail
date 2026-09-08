@@ -16,8 +16,8 @@ Some features:
 - name: Send mail
   uses: dawidd6/action-send-mail@<REF>
   env:
-    # Optional http proxy:
-    HTTP_PROXY: http://proxy.example.test:3128
+    # Optional proxy, NO_PROXY is honored too:
+    SMTP_PROXY: http://proxy.example.test:3128
   with:
     # Specify connection via URL (replaces server_address, server_port, secure,
     # username and password)

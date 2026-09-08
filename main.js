@@ -6,6 +6,22 @@ import fs from "node:fs";
 import showdown from "showdown";
 import path from "node:path";
 
+// smtp_proxy or smtps_proxy, exempted by no_proxy, each preferred lowercase like curl.
+function getProxy(host) {
+    const env = (name) => process.env[name] || process.env[name.toUpperCase()];
+
+    const proxy = env("smtp_proxy") || env("smtps_proxy");
+    if (!proxy) return undefined;
+
+    host = `.${host.toLowerCase()}`;
+    const excluded = (env("no_proxy") || "")
+        .split(",")
+        .map((entry) => entry.trim().replace(/^\./, "").toLowerCase())
+        .some((entry) => entry && (entry === "*" || host.endsWith(`.${entry}`)));
+
+    return excluded ? undefined : proxy;
+}
+
 function getText(textOrFile, convertMarkdown) {
     let text = textOrFile;
 
@@ -188,7 +204,7 @@ async function main() {
                     : undefined,
             logger: nodemailerdebug == "true" ? true : nodemailerlog,
             debug: nodemailerdebug,
-            proxy: process.env.HTTP_PROXY,
+            proxy: getProxy(serverAddress),
         });
 
         const messageOptions = {
