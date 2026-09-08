@@ -6,13 +6,15 @@ import fs from "node:fs";
 import showdown from "showdown";
 import path from "node:path";
 
-// SMTP_PROXY, exempted by NO_PROXY.
+// smtp_proxy or smtps_proxy, exempted by no_proxy, each preferred lowercase like curl.
 function getProxy(host) {
-    const proxy = process.env.SMTP_PROXY || process.env.smtp_proxy;
+    const env = (name) => process.env[name] || process.env[name.toUpperCase()];
+
+    const proxy = env("smtp_proxy") || env("smtps_proxy");
     if (!proxy) return undefined;
 
     host = `.${host.toLowerCase()}`;
-    const excluded = (process.env.NO_PROXY || process.env.no_proxy || "")
+    const excluded = (env("no_proxy") || "")
         .split(",")
         .map((entry) => entry.trim().replace(/^\./, "").toLowerCase())
         .some((entry) => entry && (entry === "*" || host.endsWith(`.${entry}`)));
