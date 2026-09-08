@@ -6,6 +6,20 @@ import fs from "node:fs";
 import showdown from "showdown";
 import path from "node:path";
 
+// SMTP_PROXY, exempted by NO_PROXY.
+function getProxy(host) {
+    const proxy = process.env.SMTP_PROXY || process.env.smtp_proxy;
+    if (!proxy) return undefined;
+
+    host = `.${host.toLowerCase()}`;
+    const excluded = (process.env.NO_PROXY || process.env.no_proxy || "")
+        .split(",")
+        .map((entry) => entry.trim().replace(/^\./, "").toLowerCase())
+        .some((entry) => entry && (entry === "*" || host.endsWith(`.${entry}`)));
+
+    return excluded ? undefined : proxy;
+}
+
 function getText(textOrFile, convertMarkdown) {
     let text = textOrFile;
 
@@ -188,7 +202,7 @@ async function main() {
                     : undefined,
             logger: nodemailerdebug == "true" ? true : nodemailerlog,
             debug: nodemailerdebug,
-            proxy: process.env.HTTP_PROXY,
+            proxy: getProxy(serverAddress),
         });
 
         const messageOptions = {
