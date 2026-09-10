@@ -37,6 +37,12 @@ Some features:
     # Optional whether this connection use TLS (default is true if server_port is 465)
     secure: true
 
+    # Optional: when secure is false (e.g. STARTTLS on port 587), abort the
+    # connection if the server does not support/negotiate STARTTLS, instead
+    # of silently falling back to a plain text connection. Recommended
+    # whenever secure is false and you authenticate with username/password.
+    require_tls: true
+
     # Optional (recommended) mail server username:
     username: ${{secrets.MAIL_USERNAME}}
 
