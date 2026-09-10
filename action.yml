@@ -14,6 +14,9 @@ inputs:
     default: "25"
   secure:
     description: Whether this connection use TLS (default is true if server_port is 465)
+  require_tls:
+    description: When 'secure' is false, refuse to send if the server does not support STARTTLS (prevents credentials from ever being sent in clear text)
+    required: false
   username:
     description: Authenticate as this user to SMTP server
   password:
