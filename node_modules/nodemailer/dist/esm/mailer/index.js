@@ -1,0 +1,375 @@
+import { EventEmitter } from 'node:events';
+import * as shared from '../shared/index.js';
+import * as mimeTypes from '../mime-funcs/mime-types.js';
+import MailComposer from '../mail-composer/index.js';
+import DKIM from '../dkim/index.js';
+import httpProxyClient from '../smtp-connection/http-proxy-client.js';
+import * as errors from '../errors.js';
+import util from 'node:util';
+import * as urllib from '../shared/url.js';
+import * as packageData from '../package-info.js';
+import MailMessage from './mail-message.js';
+import net from 'node:net';
+import dns from 'node:dns';
+import crypto from 'node:crypto';
+/**
+ * Recipients allowed on one message unless the caller sets its own maxRecipients. A backstop
+ * against a runaway or hostile recipient list rather than a delivery policy: RFC 5321 only
+ * asks a server to accept 100, so a real send is bounded far below this.
+ */
+const DEFAULT_MAX_RECIPIENTS = 100000;
+/**
+ * Creates an object for exposing the Mail API
+ *
+ * @constructor
+ * @param transporter Transport object instance to pass the mails to
+ */
+class Mail extends EventEmitter {
+    constructor(transporter, options, defaults) {
+        super();
+        this.options = options || {};
+        this._defaults = defaults || {};
+        this._defaultPlugins = {
+            compile: [(...args) => this._convertDataImages(...args)],
+            stream: []
+        };
+        this._userPlugins = {
+            compile: [],
+            stream: []
+        };
+        this.meta = new Map();
+        this.dkim = this.options.dkim ? new DKIM(this.options.dkim) : false;
+        this.transporter = transporter;
+        this.transporter.mailer = this;
+        this.logger = shared.getLogger(this.options, {
+            component: this.options.component || 'mail'
+        });
+        this.logger.debug({
+            tnx: 'create'
+        }, 'Creating transport: %s', this.getVersionString());
+        // setup emit handlers for the transporter
+        if (typeof this.transporter.on === 'function') {
+            // deprecated log interface
+            this.transporter.on('log', log => {
+                this.logger.debug({
+                    tnx: 'transport'
+                }, '%s: %s', log.type, log.message);
+            });
+            // transporter errors
+            this.transporter.on('error', err => {
+                this.logger.error({
+                    err,
+                    tnx: 'transport'
+                }, 'Transport Error: %s', err.message);
+                this.emit('error', err);
+            });
+            // indicates if the sender has became idle
+            this.transporter.on('idle', (...args) => {
+                this.emit('idle', ...args);
+            });
+            // indicates if the sender has became idle and all connections are terminated
+            this.transporter.on('clear', (...args) => {
+                this.emit('clear', ...args);
+            });
+        }
+        /**
+         * Optional methods passed to the underlying transport object
+         */
+        ['close', 'isIdle', 'verify'].forEach(method => {
+            this[method] = (...args) => {
+                if (typeof this.transporter[method] === 'function') {
+                    if (method === 'verify' && typeof this.getSocket === 'function') {
+                        this.transporter.getSocket = this.getSocket;
+                        this.getSocket = false;
+                    }
+                    return this.transporter[method](...args);
+                }
+                this.logger.warn({
+                    tnx: 'transport',
+                    methodName: method
+                }, 'Non existing method %s called for transport', method);
+                return false;
+            };
+        });
+        // setup proxy handling
+        if (this.options.proxy && typeof this.options.proxy === 'string') {
+            this.setupProxy(this.options.proxy);
+        }
+    }
+    use(step, plugin) {
+        step = (step || '').toString();
+        if (!this._userPlugins.hasOwnProperty(step)) {
+            this._userPlugins[step] = [plugin];
+        }
+        else {
+            this._userPlugins[step].push(plugin);
+        }
+        return this;
+    }
+    sendMail(data, callback = null) {
+        let promise;
+        if (!callback) {
+            promise = new Promise((resolve, reject) => {
+                callback = shared.callbackPromise(resolve, reject);
+            });
+        }
+        const done = callback;
+        if (typeof this.getSocket === 'function') {
+            this.transporter.getSocket = this.getSocket;
+            this.getSocket = false;
+        }
+        const mail = new MailMessage(this, data);
+        this.logger.debug({
+            tnx: 'transport',
+            name: this.transporter.name,
+            version: this.transporter.version,
+            action: 'send'
+        }, 'Sending mail using %s/%s', this.transporter.name, this.transporter.version);
+        this._processPlugins('compile', mail, err => {
+            if (err) {
+                this.logger.error({
+                    err,
+                    tnx: 'plugin',
+                    action: 'compile'
+                }, 'PluginCompile Error: %s', err.message);
+                return done(err);
+            }
+            let recipientCount;
+            try {
+                mail.message = new MailComposer(mail.data).compile();
+                mail.setMailerHeader();
+                mail.setPriorityHeaders();
+                mail.setListHeaders();
+                recipientCount = mail.message.getEnvelope().to.length;
+            }
+            catch (err) {
+                // message data can throw while it is compiled, the error belongs to the callback
+                this.logger.error({
+                    err,
+                    tnx: 'transport',
+                    action: 'send'
+                }, 'Compile Error: %s', err.message);
+                return done(err);
+            }
+            const maxRecipients = mail.data.maxRecipients === undefined ? DEFAULT_MAX_RECIPIENTS : mail.data.maxRecipients;
+            if (maxRecipients && recipientCount > maxRecipients) {
+                const err = new Error(`Message has ${recipientCount} recipients, which is over the ${maxRecipients} allowed by maxRecipients`);
+                err.code = errors.EMAXRECIPIENTS;
+                this.logger.error({
+                    err,
+                    tnx: 'transport',
+                    action: 'send'
+                }, 'Send Error: %s', err.message);
+                return done(err);
+            }
+            this._processPlugins('stream', mail, err => {
+                if (err) {
+                    this.logger.error({
+                        err,
+                        tnx: 'plugin',
+                        action: 'stream'
+                    }, 'PluginStream Error: %s', err.message);
+                    return done(err);
+                }
+                if (mail.data.dkim || this.dkim) {
+                    mail.message.processFunc(input => {
+                        const dkim = mail.data.dkim ? new DKIM(mail.data.dkim) : this.dkim;
+                        this.logger.debug({
+                            tnx: 'DKIM',
+                            messageId: mail.message.messageId(),
+                            dkimDomains: dkim.keys.map(key => key.keySelector + '.' + key.domainName).join(', ')
+                        }, 'Signing outgoing message with %s keys', dkim.keys.length);
+                        return dkim.sign(input, mail.data._dkim);
+                    });
+                }
+                this.transporter.send(mail, (...args) => {
+                    if (args[0]) {
+                        this.logger.error({
+                            err: args[0],
+                            tnx: 'transport',
+                            action: 'send'
+                        }, 'Send Error: %s', args[0].message);
+                    }
+                    done(...args);
+                });
+            });
+        });
+        return promise;
+    }
+    getVersionString() {
+        return util.format('%s (%s; +%s; %s/%s)', packageData.name, packageData.version, packageData.homepage, this.transporter.name, this.transporter.version);
+    }
+    /** @internal */
+    _processPlugins(step, mail, callback) {
+        step = (step || '').toString();
+        if (!this._userPlugins.hasOwnProperty(step)) {
+            return callback();
+        }
+        const userPlugins = this._userPlugins[step] || [];
+        const defaultPlugins = this._defaultPlugins[step] || [];
+        if (userPlugins.length) {
+            this.logger.debug({
+                tnx: 'transaction',
+                pluginCount: userPlugins.length,
+                step
+            }, 'Using %s plugins for %s', userPlugins.length, step);
+        }
+        if (userPlugins.length + defaultPlugins.length === 0) {
+            return callback();
+        }
+        let pos = 0;
+        let block = 'default';
+        const processPlugins = () => {
+            let curplugins = block === 'default' ? defaultPlugins : userPlugins;
+            if (pos >= curplugins.length) {
+                if (block === 'default' && userPlugins.length) {
+                    block = 'user';
+                    pos = 0;
+                    curplugins = userPlugins;
+                }
+                else {
+                    return callback();
+                }
+            }
+            const plugin = curplugins[pos++];
+            plugin(mail, err => {
+                if (err) {
+                    return callback(err);
+                }
+                processPlugins();
+            });
+        };
+        processPlugins();
+    }
+    /**
+     * Sets up proxy handler for a Nodemailer object
+     *
+     * @param proxyUrl Proxy configuration url
+     */
+    setupProxy(proxyUrl) {
+        const proxy = urllib.parse(proxyUrl);
+        // setup socket handler for the mailer object
+        this.getSocket = (options, callback) => {
+            const protocol = proxy.protocol.replace(/:$/, '').toLowerCase();
+            if (this.meta.has('proxy_handler_' + protocol)) {
+                return this.meta.get('proxy_handler_' + protocol)(proxy, options, callback);
+            }
+            switch (protocol) {
+                // Connect using a HTTP CONNECT method
+                case 'http':
+                case 'https':
+                    httpProxyClient(proxy.href, options.port, options.host, this.options.tls || {}, (err, socket) => {
+                        if (err) {
+                            return callback(err);
+                        }
+                        return callback(null, {
+                            connection: socket
+                        });
+                    });
+                    return;
+                case 'socks':
+                case 'socks5':
+                case 'socks4':
+                case 'socks4a': {
+                    if (!this.meta.has('proxy_socks_module')) {
+                        let err = new Error('Socks module not loaded');
+                        err.code = errors.EPROXY;
+                        return callback(err);
+                    }
+                    const connect = (ipaddress) => {
+                        const proxyV2 = !!this.meta.get('proxy_socks_module').SocksClient;
+                        const socksClient = proxyV2 ? this.meta.get('proxy_socks_module').SocksClient : this.meta.get('proxy_socks_module');
+                        const proxyType = Number(proxy.protocol.replace(/\D/g, '')) || 5;
+                        const connectionOpts = {
+                            proxy: {
+                                ipaddress,
+                                port: Number(proxy.port),
+                                type: proxyType
+                            },
+                            [proxyV2 ? 'destination' : 'target']: {
+                                host: options.host,
+                                port: options.port
+                            },
+                            command: 'connect'
+                        };
+                        if (proxy.username || proxy.password) {
+                            const username = proxy.username || '';
+                            const password = proxy.password || '';
+                            if (proxyV2) {
+                                connectionOpts.proxy.userId = username;
+                                connectionOpts.proxy.password = password;
+                            }
+                            else if (proxyType === 4) {
+                                connectionOpts.userid = username;
+                            }
+                            else {
+                                connectionOpts.authentication = {
+                                    username,
+                                    password
+                                };
+                            }
+                        }
+                        socksClient.createConnection(connectionOpts, (err, info) => {
+                            if (err) {
+                                return callback(err);
+                            }
+                            return callback(null, {
+                                connection: info.socket || info
+                            });
+                        });
+                    };
+                    if (net.isIP(proxy.hostname)) {
+                        return connect(proxy.hostname);
+                    }
+                    return dns.resolve(proxy.hostname, (err, address) => {
+                        if (err) {
+                            return callback(err);
+                        }
+                        connect(Array.isArray(address) ? address[0] : address);
+                    });
+                }
+            }
+            let err = new Error('Unknown proxy configuration');
+            err.code = errors.EPROXY;
+            callback(err);
+        };
+    }
+    /** @internal */
+    _convertDataImages(mail, callback) {
+        if ((!this.options.attachDataUrls && !mail.data.attachDataUrls) || !mail.data.html) {
+            return callback();
+        }
+        mail.resolveContent(mail.data, 'html', { disableFileAccess: mail.data.disableFileAccess, disableUrlAccess: mail.data.disableUrlAccess }, (err, html) => {
+            if (err) {
+                return callback(err);
+            }
+            let cidCounter = 0;
+            html = (html || '')
+                .toString()
+                .replace(/(<img\b[^<>]{0,1024} src\s{0,20}=[\s"']{0,20})(data:([^;]+);[^"'>\s]+)/gi, (match, prefix, dataUri, mimeType) => {
+                const cid = crypto.randomBytes(10).toString('hex') + '@localhost';
+                if (!mail.data.attachments) {
+                    mail.data.attachments = [];
+                }
+                if (!Array.isArray(mail.data.attachments)) {
+                    mail.data.attachments = [].concat(mail.data.attachments || []);
+                }
+                mail.data.attachments.push({
+                    path: dataUri,
+                    cid,
+                    filename: 'image-' + ++cidCounter + '.' + mimeTypes.detectExtension(mimeType)
+                });
+                return prefix + 'cid:' + cid;
+            });
+            mail.data.html = html;
+            callback();
+        });
+    }
+    set(key, value) {
+        return this.meta.set(key, value);
+    }
+    get(key) {
+        return this.meta.get(key);
+    }
+}
+export default Mail;
