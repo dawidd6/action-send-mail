@@ -3,7 +3,7 @@ updates:
 - package-ecosystem: npm
   directory: "/"
   schedule:
-    interval: daily
+    interval: weekly
     time: "04:00"
   pull-request-branch-name:
     separator: "-"
@@ -17,7 +17,7 @@ updates:
 - package-ecosystem: github-actions
   directory: "/"
   schedule:
-    interval: daily
+    interval: weekly
     time: "04:00"
   pull-request-branch-name:
     separator: "-"
