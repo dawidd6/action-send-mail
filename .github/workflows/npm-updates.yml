@@ -2,9 +2,15 @@ name: NPM Updates
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - package.json
+      - package-lock.json
 
 jobs:
   npm-updates:
-    uses: dawidd6/reusable-workflows/.github/workflows/npm-updates.yml@master
+    uses: dawidd6/reusable-workflows/.github/workflows/npm-updates.yml@master # zizmor: ignore[unpinned-uses]
     secrets:
       personal_access_token: ${{secrets.TOKEN}}
