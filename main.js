@@ -98,10 +98,6 @@ async function main() {
         let username = core.getInput("username");
         let password = core.getInput("password");
 
-        if (!secure) {
-            secure = serverPort === "465" ? "true" : "false";
-        }
-
         const connectionUrl = core.getInput("connection_url");
         if (connectionUrl) {
             const url = new URL(connectionUrl);
@@ -112,7 +108,6 @@ async function main() {
                     );
                 case "smtp:":
                     serverPort = "25";
-                    secure = "false";
                     break;
                 case "smtp+starttls:":
                     serverPort = "465";
@@ -131,6 +126,10 @@ async function main() {
             if (url.password) {
                 password = unescape(url.password);
             }
+        }
+
+        if (!secure) {
+            secure = serverPort === "465" ? "true" : "false";
         }
 
         const subject = core.getInput("subject", { required: true });

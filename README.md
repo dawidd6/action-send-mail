@@ -19,7 +19,7 @@ Some features:
     # Optional proxy, NO_PROXY is honored too:
     SMTP_PROXY: http://proxy.example.test:3128
   with:
-    # Specify connection via URL (replaces server_address, server_port, secure,
+    # Specify connection via URL (replaces server_address, server_port,
     # username and password)
     #
     # Format:
