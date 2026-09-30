@@ -6,7 +6,7 @@ branding:
   color: blue
 inputs:
   connection_url:
-    description: Connection URL protocol://user:password@server:port, protocol can be smtp or smtp+starttls, replaces server_address, server_port, username and password
+    description: Connection URL protocol://user:password@server:port, protocol can be smtp, smtps (TLS, default port 465) or smtp+starttls (STARTTLS required, default port 587), replaces server_address, server_port, username and password
   server_address:
     description: SMTP server address
   server_port:

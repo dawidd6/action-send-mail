@@ -94,7 +94,7 @@ async function main() {
         let serverAddress = core.getInput("server_address");
         let serverPort = core.getInput("server_port");
         let secure = core.getInput("secure");
-        const requireTLS = core.getInput("require_tls", { required: false });
+        let requireTLS = core.getInput("require_tls", { required: false });
         let username = core.getInput("username");
         let password = core.getInput("password");
 
@@ -109,9 +109,14 @@ async function main() {
                 case "smtp:":
                     serverPort = "25";
                     break;
-                case "smtp+starttls:":
+                case "smtps:":
                     serverPort = "465";
                     secure = "true";
+                    break;
+                case "smtp+starttls:":
+                    serverPort = "587";
+                    secure = "false";
+                    requireTLS = "true";
                     break;
             }
             if (url.hostname) {

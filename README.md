@@ -25,7 +25,8 @@ Some features:
     # Format:
     #
     #  * smtp://user:password@server:port
-    #  * smtp+starttls://user:password@server:port
+    #  * smtps://user:password@server:port (TLS, default port 465)
+    #  * smtp+starttls://user:password@server:port (STARTTLS required, default port 587)
     connection_url: ${{secrets.MAIL_CONNECTION}}
 
     # Required mail server address if not connection_url:
