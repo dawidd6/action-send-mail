@@ -1,6 +1,6 @@
 import type { Logger } from '../shared/index.js';
 import type { MimeNodeEnvelope } from '../mime-node/index.js';
-import type { default as MailMessage, MailMessageData } from '../mailer/mail-message.js';
+import type MailMessage from '../mailer/mail-message.js';
 import type { default as Mail, SentMessageInfo, SendMailOptions, TransportOptions } from '../mailer/index.js';
 /**
  * Options for the JSON transport
@@ -12,16 +12,23 @@ export interface JSONTransportOptions extends TransportOptions {
     skipEncoding?: boolean | undefined;
 }
 /**
- * The value the JSON transport hands to the send callback
+ * The value the JSON transport hands to the send callback. M is the type of the message
+ * field: a JSON string by default, the message object itself when skipEncoding is set
  */
-export interface JSONSentMessageInfo extends SentMessageInfo {
+export interface JSONSentMessageInfo<M = string> extends SentMessageInfo {
     /** The envelope the message was generated with */
     envelope: MimeNodeEnvelope;
     /** Message-ID value of the message */
     messageId: string;
     /** The normalized message as a JSON string, or as the object itself when skipEncoding is set */
-    message: string | MailMessageData;
+    message: M;
 }
+/**
+ * The value the JSON transport hands to the send callback when skipEncoding is set: the
+ * message field holds the message object. Typed loosely so that a transporter created with
+ * skipEncoding still fits a variable declared with the plain result type
+ */
+export type JSONSentMessageObjectInfo = JSONSentMessageInfo<any>;
 /**
  * Generates a Transport object to generate JSON output
  *
@@ -50,5 +57,8 @@ declare namespace JSONTransport {
     type Options = JSONTransportOptions;
     type MailOptions = SendMailOptions;
     type SentMessageInfo = JSONSentMessageInfo;
+    type SentMessageObjectInfo = JSONSentMessageObjectInfo;
 }
+/** The same aliases as module level exports, for `import * as JSONTransport` and `import JSONTransport = require()` */
+export type { JSONTransportOptions as Options, SendMailOptions as MailOptions, JSONSentMessageInfo as SentMessageInfo, JSONSentMessageObjectInfo as SentMessageObjectInfo };
 export default JSONTransport;

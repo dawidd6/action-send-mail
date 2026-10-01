@@ -17,7 +17,7 @@ export interface RelaxedBodyOptions {
  * a non-empty body always ends with CRLF. Bytes are canonicalized as they arrive,
  * so a line of any length costs constant memory.
  */
-export default class RelaxedBody extends Transform {
+declare class RelaxedBody extends Transform {
     bodyHash: crypto.Hash;
     /** Bytes of the original body seen so far */
     byteLength: number;
@@ -25,3 +25,12 @@ export default class RelaxedBody extends Transform {
     constructor(options?: RelaxedBodyOptions);
     updateHash(chunk: Buffer, final?: boolean): void;
 }
+/**
+ * Type aliases in the layout of @types/nodemailer, so `RelaxedBody.Options` style references keep working
+ */
+declare namespace RelaxedBody {
+    type Options = RelaxedBodyOptions;
+}
+/** The same alias as a module level export, for `import * as RelaxedBody` and `import RelaxedBody = require()` */
+export type { RelaxedBodyOptions as Options };
+export default RelaxedBody;

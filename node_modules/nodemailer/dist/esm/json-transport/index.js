@@ -48,6 +48,8 @@ class JSONTransport {
                 }
                 delete data.envelope;
                 delete data.normalizedHeaders;
+                // the message field is the object itself with skipEncoding, the
+                // createTransport overload for that option types the result accordingly
                 return done(null, {
                     envelope,
                     messageId,

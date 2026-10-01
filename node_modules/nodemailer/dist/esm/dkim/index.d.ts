@@ -30,11 +30,23 @@ declare class DKIM {
     constructor(options: DKIMOptions);
     sign(input: Readable | Buffer | string, extraOptions?: DKIMOptions): DKIMSignedStream;
 }
+/** The signer options without any key material */
+export type DKIMOptionalOptions = Omit<DKIMOptions, 'keys' | 'domainName' | 'keySelector' | 'privateKey'>;
+/** The signer options for a single key given as domainName, keySelector and privateKey */
+export type DKIMSingleKeyOptions = Omit<DKIMOptions, 'keys'>;
+/** The signer options for one or more keys given through `keys` */
+export type DKIMMultipleKeysOptions = DKIMOptionalOptions & {
+    keys: DKIMKey | DKIMKey[];
+};
 /**
  * Type aliases in the layout of @types/nodemailer, so `DKIM.Options` style references keep working
  */
 declare namespace DKIM {
     type Options = DKIMOptions;
-    type SingleKeyOptions = Omit<DKIMOptions, 'keys'>;
+    type OptionalOptions = DKIMOptionalOptions;
+    type SingleKeyOptions = DKIMSingleKeyOptions;
+    type MultipleKeysOptions = DKIMMultipleKeysOptions;
 }
+/** The same aliases as module level exports, for `import * as DKIM` and `import DKIM = require()` */
+export type { DKIMOptions as Options, DKIMOptionalOptions as OptionalOptions, DKIMSingleKeyOptions as SingleKeyOptions, DKIMMultipleKeysOptions as MultipleKeysOptions };
 export default DKIM;

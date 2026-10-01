@@ -60,4 +60,6 @@ declare namespace StreamTransport {
     type MailOptions = SendMailOptions;
     type SentMessageInfo = StreamSentMessageInfo;
 }
+/** The same aliases as module level exports, for `import * as StreamTransport` and `import StreamTransport = require()` */
+export type { StreamTransportOptions as Options, SendMailOptions as MailOptions, StreamSentMessageInfo as SentMessageInfo };
 export default StreamTransport;

@@ -16,7 +16,7 @@ const EMPTY_LINES = Buffer.alloc(4096, CRLF);
  * a non-empty body always ends with CRLF. Bytes are canonicalized as they arrive,
  * so a line of any length costs constant memory.
  */
-export default class RelaxedBody extends Transform {
+class RelaxedBody extends Transform {
     constructor(options) {
         super();
         options = options || {};
@@ -138,3 +138,4 @@ export default class RelaxedBody extends Transform {
         callback();
     }
 }
+export default RelaxedBody;

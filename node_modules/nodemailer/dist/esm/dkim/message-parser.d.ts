@@ -13,7 +13,7 @@ export interface MessageParserHeaderLine {
  * from the rest of the body. Headers are emitted with the 'headers' event. Message
  * body is passed on as the resulting stream.
  */
-export default class MessageParser extends Transform {
+declare class MessageParser extends Transform {
     lastBytes: Buffer;
     headersParsed: boolean;
     headerBytes: number;
@@ -37,3 +37,12 @@ export default class MessageParser extends Transform {
     checkHeaders(data: Buffer): boolean;
     parseHeaders(): MessageParserHeaderLine[];
 }
+/**
+ * Type aliases in the layout of @types/nodemailer, so `MessageParser.Header` style references keep working
+ */
+declare namespace MessageParser {
+    type Header = MessageParserHeaderLine;
+}
+/** The same alias as a module level export, for `import * as MessageParser` and `import MessageParser = require()` */
+export type { MessageParserHeaderLine as Header };
+export default MessageParser;
