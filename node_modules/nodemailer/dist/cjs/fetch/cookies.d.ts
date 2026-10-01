@@ -17,13 +17,14 @@ export interface Cookie {
     secure?: boolean | undefined;
     httponly?: boolean | undefined;
 }
+type CookieEntry = Cookie;
 /**
  * Creates a biskviit cookie jar for managing cookie values in memory
  *
  * @constructor
  * @param [options] Optional options object
  */
-export default class Cookies {
+declare class Cookies {
     options: CookiesOptions;
     cookies: Cookie[];
     constructor(options?: CookiesOptions);
@@ -94,3 +95,13 @@ export default class Cookies {
      */
     getPath(pathname?: string | null): string;
 }
+/**
+ * Type aliases in the layout of @types/nodemailer, so `Cookies.Cookie` style references keep working
+ */
+declare namespace Cookies {
+    type Options = CookiesOptions;
+    type Cookie = CookieEntry;
+}
+/** The same alias as a module level export, for `import * as Cookies` and `import Cookies = require()` */
+export type { CookiesOptions as Options };
+export default Cookies;

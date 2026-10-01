@@ -64,4 +64,6 @@ declare namespace SendmailTransport {
     type MailOptions = SendMailOptions;
     type SentMessageInfo = SendmailSentMessageInfo;
 }
+/** The same aliases as module level exports, for `import * as SendmailTransport` and `import SendmailTransport = require()` */
+export type { SendmailTransportOptions as Options, SendMailOptions as MailOptions, SendmailSentMessageInfo as SentMessageInfo };
 export default SendmailTransport;
