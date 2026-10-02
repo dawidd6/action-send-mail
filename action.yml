@@ -54,6 +54,7 @@ inputs:
   convert_markdown:
     description: Convert body from Markdown to HTML (set content_type input as text/html too)
     required: false
+    default: "false"
   attachments:
     description: Files that will be added to mail message attachments (separated with comma)
     required: false

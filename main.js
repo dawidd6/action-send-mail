@@ -143,7 +143,7 @@ async function main() {
         const replyTo = core.getInput("reply_to", { required: false });
         const inReplyTo = core.getInput("in_reply_to", { required: false });
         const attachments = core.getInput("attachments", { required: false });
-        const convertMarkdown = core.getInput("convert_markdown", {
+        const convertMarkdown = core.getBooleanInput("convert_markdown", {
             required: false,
         });
         const ignoreCert = core.getInput("ignore_cert", { required: false });
