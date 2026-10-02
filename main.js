@@ -93,7 +93,9 @@ async function main() {
     try {
         let serverAddress = core.getInput("server_address");
         let serverPort = core.getInput("server_port");
-        let secure = core.getInput("secure");
+        let secure = core.getInput("secure")
+            ? core.getBooleanInput("secure")
+            : undefined;
         let requireTLS = core.getInput("require_tls", { required: false });
         let username = core.getInput("username");
         let password = core.getInput("password");
@@ -111,11 +113,11 @@ async function main() {
                     break;
                 case "smtps:":
                     serverPort = "465";
-                    secure = "true";
+                    secure = true;
                     break;
                 case "smtp+starttls:":
                     serverPort = "587";
-                    secure = "false";
+                    secure = false;
                     requireTLS = "true";
                     break;
             }
@@ -133,8 +135,8 @@ async function main() {
             }
         }
 
-        if (!secure) {
-            secure = serverPort === "465" ? "true" : "false";
+        if (secure === undefined) {
+            secure = serverPort === "465";
         }
 
         const subject = core.getInput("subject", { required: true });
@@ -200,7 +202,7 @@ async function main() {
                       }
                     : undefined,
             port: serverPort,
-            secure: secure === "true",
+            secure: secure,
             requireTLS: requireTLS === "true",
             tls:
                 ignoreCert == "true"
