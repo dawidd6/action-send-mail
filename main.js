@@ -93,14 +93,12 @@ async function main() {
     try {
         let serverAddress = core.getInput("server_address");
         let serverPort = core.getInput("server_port");
-        let secure = core.getInput("secure");
-        const requireTLS = core.getInput("require_tls", { required: false });
+        let secure = core.getInput("secure")
+            ? core.getBooleanInput("secure")
+            : undefined;
+        let requireTLS = core.getInput("require_tls", { required: false });
         let username = core.getInput("username");
         let password = core.getInput("password");
-
-        if (!secure) {
-            secure = serverPort === "465" ? "true" : "false";
-        }
 
         const connectionUrl = core.getInput("connection_url");
         if (connectionUrl) {
@@ -112,11 +110,15 @@ async function main() {
                     );
                 case "smtp:":
                     serverPort = "25";
-                    secure = "false";
+                    break;
+                case "smtps:":
+                    serverPort = "465";
+                    secure = true;
                     break;
                 case "smtp+starttls:":
-                    serverPort = "465";
-                    secure = "true";
+                    serverPort = "587";
+                    secure = false;
+                    requireTLS = "true";
                     break;
             }
             if (url.hostname) {
@@ -131,6 +133,10 @@ async function main() {
             if (url.password) {
                 password = unescape(url.password);
             }
+        }
+
+        if (secure === undefined) {
+            secure = serverPort === "465";
         }
 
         const subject = core.getInput("subject", { required: true });
@@ -196,7 +202,7 @@ async function main() {
                       }
                     : undefined,
             port: serverPort,
-            secure: secure === "true",
+            secure: secure,
             requireTLS: requireTLS === "true",
             tls:
                 ignoreCert == "true"
