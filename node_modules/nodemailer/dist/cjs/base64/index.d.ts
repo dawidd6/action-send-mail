@@ -24,6 +24,9 @@ export interface EncoderOptions {
 /**
  * Creates a transform stream for encoding data to base64 encoding
  *
+ * The output is the same as `wrap(encode(input), lineLength)` no matter how the input is split
+ * into chunks: every line but the last one ends with a line break, the last one does not
+ *
  * @constructor
  * @param options Stream options
  * @param [options.lineLength=76] Maximum length for lines, set to false to disable wrapping
