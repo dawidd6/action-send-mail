@@ -9,10 +9,12 @@ import SESTransport from './ses-transport/index.js';
 import * as errors from './errors.js';
 import nmfetch from './fetch/index.js';
 import * as packageData from './package-info.js';
-const ETHEREAL_API = (process.env.ETHEREAL_API || 'https://api.nodemailer.com').replace(/\/+$/, '');
-const ETHEREAL_WEB = (process.env.ETHEREAL_WEB || 'https://ethereal.email').replace(/\/+$/, '');
-const ETHEREAL_API_KEY = (process.env.ETHEREAL_API_KEY || '').replace(/\s*/g, '') || null;
-const ETHEREAL_CACHE = ['true', 'yes', 'y', '1'].includes((process.env.ETHEREAL_CACHE || 'yes').toString().trim().toLowerCase());
+// Read on use rather than at load, so that importing the module does not touch the
+// environment (Deno refuses that without --allow-env, even for apps that never use Ethereal)
+const etherealApi = () => (process.env.ETHEREAL_API || 'https://api.nodemailer.com').replace(/\/+$/, '');
+const etherealWeb = () => (process.env.ETHEREAL_WEB || 'https://ethereal.email').replace(/\/+$/, '');
+const etherealApiKey = () => (process.env.ETHEREAL_API_KEY || '').replace(/\s*/g, '') || null;
+const etherealCache = () => ['true', 'yes', 'y', '1'].includes((process.env.ETHEREAL_CACHE || 'yes').toString().trim().toLowerCase());
 let testAccount = false;
 export function createTransport(transporter, defaults) {
     let options;
@@ -73,11 +75,11 @@ export function createTestAccount(apiUrl, callback) {
         });
     }
     const done = callback;
-    if (ETHEREAL_CACHE && testAccount) {
+    if (etherealCache() && testAccount) {
         setImmediate(() => done(null, testAccount));
         return promise;
     }
-    apiUrl = apiUrl || ETHEREAL_API;
+    apiUrl = apiUrl || etherealApi();
     const chunks = [];
     let chunklen = 0;
     const requestHeaders = {};
@@ -85,8 +87,9 @@ export function createTestAccount(apiUrl, callback) {
         requestor: packageData.name,
         version: packageData.version
     };
-    if (ETHEREAL_API_KEY) {
-        requestHeaders.Authorization = 'Bearer ' + ETHEREAL_API_KEY;
+    const apiKey = etherealApiKey();
+    if (apiKey) {
+        requestHeaders.Authorization = 'Bearer ' + apiKey;
     }
     const fetchOptions = {
         contentType: 'application/json',
@@ -154,7 +157,7 @@ export function getTestMessageUrl(info) {
         }
     }
     if (infoProps.has('STATUS') && infoProps.has('MSGID')) {
-        return ((testAccount && testAccount.web) || ETHEREAL_WEB) + '/message/' + infoProps.get('MSGID');
+        return ((testAccount && testAccount.web) || etherealWeb()) + '/message/' + infoProps.get('MSGID');
     }
     return false;
 }
